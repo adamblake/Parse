@@ -6,10 +6,6 @@
  * @author Adam Blake <adamblake@g.ucla.edu>
  * @copyright (C) 2014 Adam Blake <adamblake@g.ucla.edu>
  * @license http://opensource.org/licenses/GPL-3.0 GNU Public License
- */
-
-/*
- * Copyright (C) 2014 Adam Blake <adamblake@g.ucla.edu>
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
