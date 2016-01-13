@@ -124,7 +124,7 @@ class ParseConfigTest extends \PHPUnit_Framework_TestCase
      */
     public function testYamlEmpty()
     {
-        ParseConfig::yaml($this->files.'/empty.yml');
+        $this->assertEmpty(ParseConfig::yaml($this->files.'/empty.yml'));
     }
 
     /**
@@ -149,7 +149,7 @@ class ParseConfigTest extends \PHPUnit_Framework_TestCase
      */
     public function testJsonEmpty()
     {
-        ParseConfig::json($this->files.'/empty.json');
+        $this->assertEmpty(ParseConfig::json($this->files.'/empty.json'));
     }
 
     /**
@@ -174,7 +174,7 @@ class ParseConfigTest extends \PHPUnit_Framework_TestCase
      */
     public function testIniEmpty()
     {
-        ParseConfig::ini($this->files.'/empty.ini');
+        $this->assertEmpty(ParseConfig::ini($this->files.'/empty.ini'));
     }
 
     /**
