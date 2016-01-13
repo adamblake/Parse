@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <phpdoc>
   <parser>
-    <target>../phpdoc/ParseConfig/output</target>
+    <target>../phpdoc/Read/output</target>
   </parser>
   <transformer>
     <target>./docs</target>

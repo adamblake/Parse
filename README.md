@@ -1,5 +1,5 @@
-# ParseConfig
-Simple one-off PHP class for parsing config files and converting them to arrays.
+# Parse
+Simple one-off PHP class for parsing files and converting them to arrays.
 Currently supports JSON, YAML (using symfony/yaml), and INI files. INI parsing 
 also supports nested arrays by using dot syntax in sections, i.e. this
 ```ini
@@ -11,14 +11,14 @@ will be parsed as
 ["this" => ["section" => ["is" => ["deeply" => "nested"]]]]
 ```
 
-All config files can either be read from file or from an appropriately formed
+All supported types can either be read from file or from an appropriately formed
 string. Additionally, the data can be returned as an associative array or 
 a series of nested objects, as an added convenience for those who want 
 consistent structure in their applications and need one or the other. (See the 
 Usage section below for more details.)
 
 Finally, another useful feature of this packages is that all errors thrown 
-during reading and parsing of files are converted to ParseConfigExceptions and
+during reading and parsing of files are converted to ParseExceptions and
 thus will not halt the flow of the application and can be handled easily in
 try/catch blocks.
 
@@ -31,39 +31,39 @@ following to your composer.json:
   "repositories": [
     {
       "type": "git",
-      "url": "https://github.com/adamblake/ParseConfig"
+      "url": "https://github.com/adamblake/Parse"
     }
   ],
   "require": {
-    "adamblake/ParseConfig": "dev-master"
+    "adamblake/Parse": "dev-master"
   }
 }
 ```
 
 # Usage
 ```php
-use adamblake\ParseConfig;
+use adamblake\Parse;
 ...
 
 // automatically determine file type from the extension
-$data = ParseConfig::parse('path/to/file');
+$data = Parse::parse('path/to/file');
 $data['setting'] = 'value';
 
 // parse as json, yaml, ini
-$data = ParseConfig::json('path/to/file');
-$data = ParseConfig::yaml('path/to/file');
-$data = ParseConfig::ini('path/to/file');
+$data = Parse::json('path/to/file');
+$data = Parse::yaml('path/to/file');
+$data = Parse::ini('path/to/file');
 
 // read from string instead (only with named parse functions)
-$data = ParseConfig::ini('key=value', true);
+$data = Parse::ini('key=value', true);
 
 // convert the parsed file to an object
-$obj = ParseConfig::parse('path/to/file', true);
+$obj = Parse::parse('path/to/file', true);
 $obj->setting = 'value';
 
 // convert a parsed string to an object
-$data = ParseConfig::ini('key=value', true);
-$obj  = ParseConfig::arrayToObject($data);
+$data = Parse::ini('key=value', true);
+$obj  = Parse::arrayToObject($data);
 $obj->key = 'value';
 ```
 

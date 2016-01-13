@@ -3,13 +3,13 @@
 namespace adamblake;
 
 /**
- * PHPUnit test class for ParseConfig. Files utilized by this class can be found
+ * PHPUnit test class for Parse. Files utilized by this class can be found
  * in test/files.
  */
-class ParseConfigTest extends \PHPUnit_Framework_TestCase
+class ParseTest extends \PHPUnit_Framework_TestCase
 {
     /**
-     * @var ParseConfig
+     * @var Parse
      */
     protected $object;
 
@@ -90,108 +90,108 @@ class ParseConfigTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @covers adamblake\ParseConfig::parse
+     * @covers adamblake\Parse::parse
      */
     public function testParse()
     {
-        $this->assertEquals($this->testData, ParseConfig::parse($this->files.'/valid.yml'));
-        $this->assertEquals($this->testData, ParseConfig::parse($this->files.'/valid.yaml'));
-        $this->assertEquals($this->testData, ParseConfig::parse($this->files.'/valid.json'));
-        $this->assertEquals($this->testData, ParseConfig::parse($this->files.'/valid.ini'));
+        $this->assertEquals($this->testData, Parse::parse($this->files.'/valid.yml'));
+        $this->assertEquals($this->testData, Parse::parse($this->files.'/valid.yaml'));
+        $this->assertEquals($this->testData, Parse::parse($this->files.'/valid.json'));
+        $this->assertEquals($this->testData, Parse::parse($this->files.'/valid.ini'));
     }
 
     /**
-     * @covers adamblake\ParseConfig::testParse
-     * @expectedException adamblake\ParseConfigException
+     * @covers adamblake\Parse::testParse
+     * @expectedException adamblake\ParseException
      */
     public function testParseUnsupported()
     {
-        ParseConfig::parse($this->files.'/unsupported.conf');
+        Parse::parse($this->files.'/unsupported.conf');
     }
 
     /**
-     * @covers adamblake\ParseConfig::yaml
+     * @covers adamblake\Parse::yaml
      *
      * @todo     Implement testYaml() invalid tests.
      */
     public function testYaml()
     {
-        $this->assertEquals($this->testData, ParseConfig::yaml($this->files.'/valid.yml'));
+        $this->assertEquals($this->testData, Parse::yaml($this->files.'/valid.yml'));
     }
 
     /**
-     * @covers adamblake\ParseConfig::yaml
+     * @covers adamblake\Parse::yaml
      */
     public function testYamlEmpty()
     {
-        $this->assertEmpty(ParseConfig::yaml($this->files.'/empty.yml'));
+        $this->assertEmpty(Parse::yaml($this->files.'/empty.yml'));
     }
 
     /**
-     * @covers adamblake\ParseConfig::yaml
-     * @expectedException adamblake\ParseConfigException
+     * @covers adamblake\Parse::yaml
+     * @expectedException adamblake\ParseException
      */
     public function testYamlInvalid()
     {
-        ParseConfig::yaml($this->files.'/invalid.yml');
+        Parse::yaml($this->files.'/invalid.yml');
     }
 
     /**
-     * @covers adamblake\ParseConfig::json
+     * @covers adamblake\Parse::json
      */
     public function testJson()
     {
-        $this->assertEquals($this->testData, ParseConfig::json($this->files.'/valid.json'));
+        $this->assertEquals($this->testData, Parse::json($this->files.'/valid.json'));
     }
 
     /**
-     * @covers adamblake\ParseConfig::json
+     * @covers adamblake\Parse::json
      */
     public function testJsonEmpty()
     {
-        $this->assertEmpty(ParseConfig::json($this->files.'/empty.json'));
+        $this->assertEmpty(Parse::json($this->files.'/empty.json'));
     }
 
     /**
-     * @covers adamblake\ParseConfig::json
-     * @expectedException adamblake\ParseConfigException
+     * @covers adamblake\Parse::json
+     * @expectedException adamblake\ParseException
      */
     public function testJsonInvalid()
     {
-        ParseConfig::json($this->files.'/invalid.json');
+        Parse::json($this->files.'/invalid.json');
     }
 
     /**
-     * @covers adamblake\ParseConfig::ini
+     * @covers adamblake\Parse::ini
      */
     public function testIni()
     {
-        $this->assertEquals($this->testData, ParseConfig::ini($this->files.'/valid.ini'));
+        $this->assertEquals($this->testData, Parse::ini($this->files.'/valid.ini'));
     }
 
     /**
-     * @covers adamblake\ParseConfig::ini
+     * @covers adamblake\Parse::ini
      */
     public function testIniEmpty()
     {
-        $this->assertEmpty(ParseConfig::ini($this->files.'/empty.ini'));
+        $this->assertEmpty(Parse::ini($this->files.'/empty.ini'));
     }
 
     /**
-     * @covers adamblake\ParseConfig::ini
-     * @expectedException adamblake\ParseConfigException
+     * @covers adamblake\Parse::ini
+     * @expectedException adamblake\ParseException
      */
     public function testIniInvalid()
     {
-        ParseConfig::ini($this->files.'/invalid.ini');
+        Parse::ini($this->files.'/invalid.ini');
     }
 
     /**
-     * @covers adamblake\ParseConfig::arrayToObject
+     * @covers adamblake\Parse::arrayToObject
      */
     public function testArrayToObject()
     {
-        $obj = ParseConfig::arrayToObject($this->testData);
+        $obj = Parse::arrayToObject($this->testData);
         $this->assertInstanceOf('stdClass', $obj);
         $this->assertEquals($this->testData['zero'], $obj->zero);
         $this->assertEquals($this->testData['one'], $obj->one);
@@ -199,52 +199,52 @@ class ParseConfigTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @covers adamblake\ParseConfig::fget_contents
+     * @covers adamblake\Parse::fget_contents
      */
     public function testFileGetContents()
     {
         $expected = file_get_contents($this->files.'/valid.json');
-        $this->assertEquals($expected, ParseConfig::fileGetContents($this->files.'/valid.json'));
+        $this->assertEquals($expected, Parse::fileGetContents($this->files.'/valid.json'));
     }
 
     /**
-     * @covers adamblake\ParseConfig::fileGetContents
-     * @expectedException adamblake\ParseConfigException
+     * @covers adamblake\Parse::fileGetContents
+     * @expectedException adamblake\ParseException
      */
     public function testFileGetContentsNonexistent()
     {
-        ParseConfig::fileGetContents($this->files.'/nonexistent.file');
+        Parse::fileGetContents($this->files.'/nonexistent.file');
     }
 
     /**
-     * @covers adamblake\ParseConfig::parseIniString
+     * @covers adamblake\Parse::parseIniString
      */
     public function testParseIniString()
     {
-        $test = ParseConfig::parseIniString('key=value');
+        $test = Parse::parseIniString('key=value');
         $this->assertEquals(array('key' => 'value'), $test);
     }
 
     /**
-     * @covers adamblake\ParseConfig::parseIniString
-     * @expectedException adamblake\ParseConfigException
+     * @covers adamblake\Parse::parseIniString
+     * @expectedException adamblake\ParseException
      */
     public function testParseIniStringInvalid()
     {
-        ParseConfig::parseIniString('[');
+        Parse::parseIniString('[');
     }
 
     /**
-     * @covers adamblake\ParseConfig::getExt
+     * @covers adamblake\Parse::getExt
      */
     public function testGetExt()
     {
-        $this->assertEquals('txt', ParseConfig::getExt('simple.txt'));
-        $this->assertEquals('yml', ParseConfig::getExt('complext.txt.ini.yml'));
+        $this->assertEquals('txt', Parse::getExt('simple.txt'));
+        $this->assertEquals('yml', Parse::getExt('complext.txt.ini.yml'));
     }
 
     /**
-     * @covers adamblake\ParseConfig::detectEol
+     * @covers adamblake\Parse::detectEol
      */
     public function testDetectEol()
     {
@@ -252,8 +252,8 @@ class ParseConfigTest extends \PHPUnit_Framework_TestCase
         $nEOL = "This is some dummy text.\nThis is some dummy text.\nThis is some dummy text.\nThis is some dummy tex";
         $phpEOL = 'This is some dummy text.'.PHP_EOL.'This is some dummy text.'.PHP_EOL.'This is some dummy text.'.PHP_EOL.'This is some dummy tex';
 
-        $this->assertEquals("\r\n", ParseConfig::detectEol($rnEOL));
-        $this->assertEquals("\n", ParseConfig::detectEol($nEOL));
-        $this->assertEquals(PHP_EOL, ParseConfig::detectEol($phpEOL));
+        $this->assertEquals("\r\n", Parse::detectEol($rnEOL));
+        $this->assertEquals("\n", Parse::detectEol($nEOL));
+        $this->assertEquals(PHP_EOL, Parse::detectEol($phpEOL));
     }
 }

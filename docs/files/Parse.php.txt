@@ -1,7 +1,7 @@
 <?php
 
 /**
- * ParseConfig class.
+ * Parse class.
  *
  * @author Adam Blake <adamblake@g.ucla.edu>
  * @copyright (C) 2014 Adam Blake <adamblake@g.ucla.edu>
@@ -33,7 +33,7 @@ use Symfony\Component\Yaml\Yaml;
  * @copyright (C) 2014 Adam Blake <adamblake@g.ucla.edu>
  * @license http://opensource.org/licenses/GPL-3.0 GNU Public License
  */
-class ParseConfig
+class Parse
 {
     /**
      * Parses a configuration file and returns an associative array.
@@ -43,7 +43,7 @@ class ParseConfig
      *
      * @return array|\stdClass Associative array or class of the configurations.
      *
-     * @throws ParseConfigException An exception is thrown when an unsupported
+     * @throws ParseException An exception is thrown when an unsupported
      *                              file is passed.
      */
     public static function parse($filename, $returnObject = false)
@@ -59,7 +59,7 @@ class ParseConfig
         }
 
         if (!isset($config)) {
-            throw new ParseConfigException('The given config file '
+            throw new ParseException('The given config file '
                 ."'$filename' is invalid or of an unsupported file type "
                 .'(supported: YAML, JSON, INI.');
         }
@@ -79,7 +79,7 @@ class ParseConfig
      *
      * @return array Associative array of the file.
      *
-     * @throws ParseConfigException An exception is thrown when config cannot be
+     * @throws ParseException An exception is thrown when config cannot be
      *                              parsed.
      */
     public static function yaml($input, $isString = false)
@@ -94,7 +94,7 @@ class ParseConfig
 
         if (!is_array($yaml)) {
             // not an array
-            throw new ParseConfigException(sprintf('The input "%s" must '
+            throw new ParseException(sprintf('The input "%s" must '
                 .'contain or be a valid YAML structure.', $input));
         }
 
@@ -109,7 +109,7 @@ class ParseConfig
      *
      * @return array Associative array of the file.
      *
-     * @throws ParseConfigException An exception is thrown when JSON decode
+     * @throws ParseException An exception is thrown when JSON decode
      *                              cannot parse the file.
      */
     public static function json($input, $isString = false)
@@ -125,7 +125,7 @@ class ParseConfig
 
         if (JSON_ERROR_NONE !== $error) {
             // error occurred
-            throw new ParseConfigException(sprintf('Failed to parse JSON '
+            throw new ParseException(sprintf('Failed to parse JSON '
                 ."file '%s', error: '%s'", $input, json_last_error_msg()));
         }
 
@@ -140,7 +140,7 @@ class ParseConfig
      *
      * @return array Associative array of the file.
      *
-     * @throws ParseConfigException An exception is thrown when the INI file
+     * @throws ParseException An exception is thrown when the INI file
      *                              cannot be parsed.
      */
     public static function ini($input, $isString = false)
@@ -155,7 +155,7 @@ class ParseConfig
 
         if (!is_array($ini)) {
             // not an array
-            throw new ParseConfigException(sprintf('The file "%s" must '
+            throw new ParseException(sprintf('The file "%s" must '
                 .'have a valid INI structure.', $input));
         }
 
@@ -215,7 +215,7 @@ class ParseConfig
      *
      * @return string The read data.
      *
-     * @throws \ParseConfigException Throws an exception when file_get_contents
+     * @throws \ParseException Throws an exception when file_get_contents
      *                               cannot open the file.
      *
      * @see \file_get_contents()
@@ -235,7 +235,7 @@ class ParseConfig
      *
      * @return string The parsed INI string.
      *
-     * @throws \ParseConfigException Throws an exception when file_get_contents
+     * @throws \ParseException Throws an exception when file_get_contents
      *                               cannot open the file.
      *
      * @see \parse_ini_string()
@@ -252,11 +252,11 @@ class ParseConfig
     /**
      * Sets the error handler.
      *
-     * @see \set_error_handler(), ParseConfig::errorException()
+     * @see \set_error_handler(), Parse::errorException()
      */
     protected static function setErrorHandler()
     {
-        set_error_handler(__NAMESPACE__.'\ParseConfig::errorException');
+        set_error_handler(__NAMESPACE__.'\Parse::errorException');
     }
 
     /**
@@ -269,7 +269,7 @@ class ParseConfig
      *
      * @return bool Returns false if the error was suppressed.
      *
-     * @throws ParseConfigException Errors are redirected through this exception.
+     * @throws ParseException Errors are redirected through this exception.
      */
     public static function errorException($num, $str, $file, $line)
     {
@@ -278,7 +278,7 @@ class ParseConfig
             return false;
         }
 
-        throw new ParseConfigException($str, 0, $num, $file, $line);
+        throw new ParseException($str, 0, $num, $file, $line);
     }
 
     /**
@@ -309,3 +309,4 @@ class ParseConfig
         return $eol;
     }
 }
+

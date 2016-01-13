@@ -4,8 +4,8 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "hash": "843870aa708f9c2c678baebde1534acb",
-    "content-hash": "9e39a13c11d047ac6110a5689395e80d",
+    "hash": "d5d04845deb8e1030b4c38a448c91d17",
+    "content-hash": "8ee7c3963658829dd7595bc4ab91c4ca",
     "packages": [
         {
             "name": "symfony/yaml",
@@ -13,12 +13,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/yaml.git",
-                "reference": "5bc31de9878863fdf5919d0944c528d31654fe3e"
+                "reference": "82287b794641153ae1837b9288c3ae90cecdf5c4"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/symfony/yaml/zipball/5bc31de9878863fdf5919d0944c528d31654fe3e",
-                "reference": "5bc31de9878863fdf5919d0944c528d31654fe3e",
+                "url": "https://api.github.com/repos/symfony/yaml/zipball/82287b794641153ae1837b9288c3ae90cecdf5c4",
+                "reference": "82287b794641153ae1837b9288c3ae90cecdf5c4",
                 "shasum": ""
             },
             "require": {
@@ -54,7 +54,7 @@
             ],
             "description": "Symfony Yaml Component",
             "homepage": "https://symfony.com",
-            "time": "2016-01-04 14:51:32"
+            "time": "2016-01-13 16:23:43"
         }
     ],
     "packages-dev": [
@@ -271,12 +271,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/sebastianbergmann/php-code-coverage.git",
-                "reference": "0b327d81069aa41b5147abd33a2c53324557890d"
+                "reference": "64d40a593fc31a8abf4ce3d200147ddf8ca64e52"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/sebastianbergmann/php-code-coverage/zipball/0b327d81069aa41b5147abd33a2c53324557890d",
-                "reference": "0b327d81069aa41b5147abd33a2c53324557890d",
+                "url": "https://api.github.com/repos/sebastianbergmann/php-code-coverage/zipball/64d40a593fc31a8abf4ce3d200147ddf8ca64e52",
+                "reference": "64d40a593fc31a8abf4ce3d200147ddf8ca64e52",
                 "shasum": ""
             },
             "require": {
@@ -325,7 +325,7 @@
                 "testing",
                 "xunit"
             ],
-            "time": "2016-01-03 15:28:24"
+            "time": "2016-01-11 10:05:34"
         },
         {
             "name": "phpunit/php-file-iterator",
@@ -511,12 +511,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/sebastianbergmann/phpunit.git",
-                "reference": "1f44c091efc32e8957ab71ebd3eaf3595a0d800b"
+                "reference": "b57a49aa65fdf2fc15972f35b04b87e5447f845c"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/sebastianbergmann/phpunit/zipball/1f44c091efc32e8957ab71ebd3eaf3595a0d800b",
-                "reference": "1f44c091efc32e8957ab71ebd3eaf3595a0d800b",
+                "url": "https://api.github.com/repos/sebastianbergmann/phpunit/zipball/b57a49aa65fdf2fc15972f35b04b87e5447f845c",
+                "reference": "b57a49aa65fdf2fc15972f35b04b87e5447f845c",
                 "shasum": ""
             },
             "require": {
@@ -577,7 +577,7 @@
                 "testing",
                 "xunit"
             ],
-            "time": "2015-12-10 16:14:09"
+            "time": "2016-01-13 10:08:04"
         },
         {
             "name": "phpunit/phpunit-mock-objects",

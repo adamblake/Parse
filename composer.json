@@ -1,6 +1,6 @@
 {
-    "name": "adamblake/ParseConfig",
-    "description": "Collection of static functions for parsing config files.",
+    "name": "adamblake/Parse",
+    "description": "Collection of static functions for parsing files.",
     "license": "GPL-3.0",
     "authors": [
         {
