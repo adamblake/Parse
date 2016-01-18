@@ -1,7 +1,11 @@
 # Parse
 Simple one-off PHP class for parsing files and converting them to arrays.
-Currently supports JSON, YAML (using symfony/yaml), and INI files. INI parsing 
-also supports nested arrays by using dot syntax in sections, i.e. this
+Currently supports CSV, JSON, YAML (using symfony/yaml), and INI files and 
+strings. CSV files and strings are parsed according the the RFC (https://tools.ietf.org/html/rfc4180)
+and support user-defined delimiters and using the header row as keys for
+subsequent rows. JSON, YAML, and INI parsing support nested arrays --- that's
+right even the INIs can have nested arrays. For INIs this is indicated by using
+dot syntax in sections, i.e. this
 ```ini
 [this.section.is]
 deeply = nested
@@ -43,18 +47,19 @@ following to your composer.json:
 # Usage
 ```php
 use adamblake\Parse;
-...
 
-// automatically determine file type from the extension
-$data = Parse::parse('path/to/file');
+// automatically determine config file type from the extension (JSON, YAML, INI)
+$data = Parse::config('path/to/file');
 $data['setting'] = 'value';
 
 // parse as json, yaml, ini
 $data = Parse::json('path/to/file');
 $data = Parse::yaml('path/to/file');
 $data = Parse::ini('path/to/file');
+$data = Parse::csv('path/to/file');
+// see 'CSV extras' below for turning off header or changing delimiters
 
-// read from string instead (only with named parse functions)
+// read from string instead (only with named parse functions, i.e. not 'config')
 $data = Parse::ini('key=value', true);
 
 // convert the parsed file to an object
@@ -62,9 +67,12 @@ $obj = Parse::parse('path/to/file', true);
 $obj->setting = 'value';
 
 // convert a parsed string to an object
-$data = Parse::ini('key=value', true);
-$obj  = Parse::arrayToObject($data);
+$data = Parse::ini('key=value', true, true);
 $obj->key = 'value';
+
+// CSV extras
+// parse as csv using semicolon for delimiter and with no header
+$data = Parse::csv('path/to/file', false, false, ';', false);
 ```
 
 # Contributing
@@ -81,7 +89,7 @@ was using would throw exceptions and others would throw errors and I have a
 thing for consistency.
 
 # License
-Copyright (C) 2014 Adam Blake
+Copyright (C) 2016 Adam Blake
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by

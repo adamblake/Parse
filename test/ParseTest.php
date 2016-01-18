@@ -1,6 +1,6 @@
 <?php
 
-namespace adamblake;
+namespace adamblake\Parse;
 
 /**
  * PHPUnit test class for Parse. Files utilized by this class can be found
@@ -8,11 +8,6 @@ namespace adamblake;
  */
 class ParseTest extends \PHPUnit_Framework_TestCase
 {
-    /**
-     * @var Parse
-     */
-    protected $object;
-
     /**
      * @var array
      */
@@ -90,100 +85,23 @@ class ParseTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @covers adamblake\Parse::parse
+     * @covers adamblake\Parse::config
      */
-    public function testParse()
+    public function testConfig()
     {
-        $this->assertEquals($this->testData, Parse::parse($this->files.'/valid.yml'));
-        $this->assertEquals($this->testData, Parse::parse($this->files.'/valid.yaml'));
-        $this->assertEquals($this->testData, Parse::parse($this->files.'/valid.json'));
-        $this->assertEquals($this->testData, Parse::parse($this->files.'/valid.ini'));
+        $this->assertEquals($this->testData, Parse::config($this->files.'/valid.yml'));
+        $this->assertEquals($this->testData, Parse::config($this->files.'/valid.yaml'));
+        $this->assertEquals($this->testData, Parse::config($this->files.'/valid.json'));
+        $this->assertEquals($this->testData, Parse::config($this->files.'/valid.ini'));
     }
 
     /**
-     * @covers adamblake\Parse::testParse
-     * @expectedException adamblake\ParseException
+     * @covers adamblake\Parse::config
+     * @expectedException adamblake\Parse\ParseException
      */
-    public function testParseUnsupported()
+    public function testUnsupportedConfig()
     {
-        Parse::parse($this->files.'/unsupported.conf');
-    }
-
-    /**
-     * @covers adamblake\Parse::yaml
-     *
-     * @todo     Implement testYaml() invalid tests.
-     */
-    public function testYaml()
-    {
-        $this->assertEquals($this->testData, Parse::yaml($this->files.'/valid.yml'));
-    }
-
-    /**
-     * @covers adamblake\Parse::yaml
-     */
-    public function testYamlEmpty()
-    {
-        $this->assertEmpty(Parse::yaml($this->files.'/empty.yml'));
-    }
-
-    /**
-     * @covers adamblake\Parse::yaml
-     * @expectedException adamblake\ParseException
-     */
-    public function testYamlInvalid()
-    {
-        Parse::yaml($this->files.'/invalid.yml');
-    }
-
-    /**
-     * @covers adamblake\Parse::json
-     */
-    public function testJson()
-    {
-        $this->assertEquals($this->testData, Parse::json($this->files.'/valid.json'));
-    }
-
-    /**
-     * @covers adamblake\Parse::json
-     */
-    public function testJsonEmpty()
-    {
-        $this->assertEmpty(Parse::json($this->files.'/empty.json'));
-    }
-
-    /**
-     * @covers adamblake\Parse::json
-     * @expectedException adamblake\ParseException
-     */
-    public function testJsonInvalid()
-    {
-        Parse::json($this->files.'/invalid.json');
-    }
-
-    /**
-     * @covers adamblake\Parse::ini
-     */
-    public function testIni()
-    {
-        $this->assertEquals($this->testData, Parse::ini($this->files.'/valid.ini'));
-    }
-
-    /**
-     * @covers adamblake\Parse::ini
-     */
-    public function testIniEmpty()
-    {
-        $this->assertEmpty(Parse::ini($this->files.'/empty.ini'));
-    }
-
-    /**
-     * @covers adamblake\Parse::ini
-     * @expectedException adamblake\ParseException
-     */
-    public function testIniInvalid()
-    {
-        Parse::ini($this->files.'/invalid.ini');
+        Parse::config($this->files.'/unsupported.conf');
     }
 
     /**
@@ -209,29 +127,11 @@ class ParseTest extends \PHPUnit_Framework_TestCase
 
     /**
      * @covers adamblake\Parse::fileGetContents
-     * @expectedException adamblake\ParseException
+     * @expectedException adamblake\Parse\ParseException
      */
     public function testFileGetContentsNonexistent()
     {
         Parse::fileGetContents($this->files.'/nonexistent.file');
-    }
-
-    /**
-     * @covers adamblake\Parse::parseIniString
-     */
-    public function testParseIniString()
-    {
-        $test = Parse::parseIniString('key=value');
-        $this->assertEquals(array('key' => 'value'), $test);
-    }
-
-    /**
-     * @covers adamblake\Parse::parseIniString
-     * @expectedException adamblake\ParseException
-     */
-    public function testParseIniStringInvalid()
-    {
-        Parse::parseIniString('[');
     }
 
     /**

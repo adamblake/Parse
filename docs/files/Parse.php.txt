@@ -4,7 +4,7 @@
  * Parse class.
  *
  * @author Adam Blake <adamblake@g.ucla.edu>
- * @copyright (C) 2014 Adam Blake <adamblake@g.ucla.edu>
+ * @copyright (C) 2016 Adam Blake <adamblake@g.ucla.edu>
  * @license http://opensource.org/licenses/GPL-3.0 GNU Public License
  *
  * This program is free software; you can redistribute it and/or
@@ -22,15 +22,13 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
 
-namespace adamblake;
-
-use Symfony\Component\Yaml\Yaml;
+namespace adamblake\Parse;
 
 /**
  * Collection of static functions for parsing files.
  *
  * @author Adam Blake <adamblake@g.ucla.edu>
- * @copyright (C) 2014 Adam Blake <adamblake@g.ucla.edu>
+ * @copyright (C) 2016 Adam Blake <adamblake@g.ucla.edu>
  * @license http://opensource.org/licenses/GPL-3.0 GNU Public License
  */
 class Parse
@@ -39,23 +37,22 @@ class Parse
      * Parses a configuration file and returns an associative array.
      *
      * @param string $filename     The configuration file to parse.
-     * @param bool   $returnObject Indicates whether to return an object or array.
+     * @param bool   $returnObject Set true to return a \stdClass object.
      *
      * @return array|\stdClass Associative array or class of the configurations.
      *
-     * @throws ParseException An exception is thrown when an unsupported
-     *                              file is passed.
+     * @throws ParseException An exception is thrown for unsupported files.
      */
-    public static function parse($filename, $returnObject = false)
+    public static function config($filename, $returnObject = false)
     {
         $ext = strtolower(self::getExt($filename));
 
         if ('yml' === $ext || 'yaml' === $ext) {
-            $config = self::yaml($filename);
+            $config = self::yaml($filename, false, $returnObject);
         } elseif ('json' === $ext) {
-            $config = self::json($filename);
+            $config = self::json($filename, false, $returnObject);
         } elseif ('ini' === $ext) {
-            $config = self::ini($filename);
+            $config = self::ini($filename, false, $returnObject);
         }
 
         if (!isset($config)) {
@@ -64,130 +61,81 @@ class Parse
                 .'(supported: YAML, JSON, INI.');
         }
 
-        if ($returnObject) {
-            $config = self::arrayToObject($config);
-        }
-
         return $config;
+    }
+
+    /**
+     * Parses a CSV file or string.
+     * The first row will be interpretted as a header row and the values used
+     * as keys (column names) for the subsequent rows).
+     *
+     * @param string $input        The file or string of data to parse.
+     * @param bool   $isString     Set true to indicate that the data is a
+     *                             string, not a file holding the data.
+     * @param bool   $returnObject Set true to return a \stdClass object.
+     * @param string $delimiter    The delimiter to use when parsing the data.
+     * @param bool   $header       Set false to parse data without a header.
+     *
+     * @return array|\stdClass The parsed data.
+     */
+    public static function csv($input, $isString = false, $returnObject = false,
+        $delimiter = ',', $header = true
+    ) {
+        $parser = self::getParseMethod(__FUNCTION__);
+        $params = array($delimiter, $header);
+
+        return self::parse($parser, $input, $isString, $returnObject, $params);
     }
 
     /**
      * Parses a YAML file or string.
      *
-     * @param string $input    The YAML file path or YAML string.
-     * @param bool   $isString Set true for string input instead of file.
+     * @param string $input        The file or string of data to parse.
+     * @param bool   $isString     Set true to indicate that the data is a
+     *                             string, not a file holding the data.
+     * @param bool   $returnObject Set true to return a \stdClass object.
      *
-     * @return array Associative array of the file.
-     *
-     * @throws ParseException An exception is thrown when config cannot be
-     *                              parsed.
+     * @return array|\stdClass The parsed data.
      */
-    public static function yaml($input, $isString = false)
+    public static function yaml($input, $isString = false, $returnObject = false)
     {
-        $contents = $isString ? $input : self::fileGetContents($input);
-        $yaml = Yaml::parse(trim($contents));
+        $parser = self::getParseMethod(__FUNCTION__);
 
-        if (null === $yaml) {
-            // empty file
-            $yaml = [];
-        }
-
-        if (!is_array($yaml)) {
-            // not an array
-            throw new ParseException(sprintf('The input "%s" must '
-                .'contain or be a valid YAML structure.', $input));
-        }
-
-        return $yaml;
+        return self::parse($parser, $input, $isString, $returnObject);
     }
 
     /**
      * Parses a JSON file or string.
      *
-     * @param string $input    The JSON file path or JSON string.
-     * @param bool   $isString Set to true for string input instead of file.
+     * @param string $input        The file or string of data to parse.
+     * @param bool   $isString     Set true to indicate that the data is a
+     *                             string, not a file holding the data.
+     * @param bool   $returnObject Set true to return a \stdClass object.
      *
-     * @return array Associative array of the file.
-     *
-     * @throws ParseException An exception is thrown when JSON decode
-     *                              cannot parse the file.
+     * @return array|\stdClass The parsed data.
      */
-    public static function json($input, $isString = false)
+    public static function json($input, $isString = false, $returnObject = false)
     {
-        $contents = $isString ? $input : self::fileGetContents($input);
-        $json = json_decode(trim($contents), true);
-        $error = json_last_error();
+        $parser = self::getParseMethod(__FUNCTION__);
 
-        if (null === $json) {
-            // empty file
-            $json = [];
-        }
-
-        if (JSON_ERROR_NONE !== $error) {
-            // error occurred
-            throw new ParseException(sprintf('Failed to parse JSON '
-                ."file '%s', error: '%s'", $input, json_last_error_msg()));
-        }
-
-        return $json;
+        return self::parse($parser, $input, $isString, $returnObject);
     }
 
     /**
      * Parses an INI file or string.
      *
-     * @param string $input    The INI file path or INI string.
-     * @param bool   $isString Switch to true for string input instead of file.
+     * @param string $input        The file or string of data to parse.
+     * @param bool   $isString     Set true to indicate that the data is a
+     *                             string, not a file holding the data.
+     * @param bool   $returnObject Set true to return a \stdClass object.
      *
-     * @return array Associative array of the file.
-     *
-     * @throws ParseException An exception is thrown when the INI file
-     *                              cannot be parsed.
+     * @return array|\stdClass The parsed data.
      */
-    public static function ini($input, $isString = false)
+    public static function ini($input, $isString = false, $returnObject = false)
     {
-        $contents = $isString ? $input : self::fileGetContents($input);
-        $ini = self::parseIniString(trim($contents), true);
+        $parser = self::getParseMethod(__FUNCTION__);
 
-        if (null === $ini) {
-            // empty file
-            $ini = [];
-        }
-
-        if (!is_array($ini)) {
-            // not an array
-            throw new ParseException(sprintf('The file "%s" must '
-                .'have a valid INI structure.', $input));
-        }
-
-        // multidimensional inis
-        self::fixIniMulti($ini);
-
-        return $ini;
-    }
-
-    /**
-     * Unpacks nested INI sections/arrays.
-     *
-     * @param array $ini_arr The INI array to unpack.
-     */
-    protected static function fixIniMulti(array &$ini_arr)
-    {
-        foreach ($ini_arr as $key => &$value) {
-            if (is_array($value)) {
-                self::fixIniMulti($value);
-            }
-            if (false !== strpos($key, '.')) {
-                $key_arr = explode('.', $key);
-                $last_key = array_pop($key_arr);
-                $cur_elem = &$ini_arr;
-                foreach ($key_arr as $key_step) {
-                    $cur_elem[$key_step] = !isset($cur_elem[$key_step]) ? array() : $cur_elem[$key_step];
-                    $cur_elem = &$cur_elem[$key_step];
-                }
-                $cur_elem[$last_key] = $value;
-                unset($ini_arr[$key]);
-            }
-        }
+        return self::parse($parser, $input, $isString, $returnObject);
     }
 
     /**
@@ -215,48 +163,18 @@ class Parse
      *
      * @return string The read data.
      *
-     * @throws \ParseException Throws an exception when file_get_contents
-     *                               cannot open the file.
+     * @throws ParseException Throws an exception when file_get_contents cannot
+     *                        open the file.
      *
      * @see \file_get_contents()
      */
     public static function fileGetContents()
     {
-        self::setErrorHandler();
+        set_error_handler(__NAMESPACE__.'\Parse::errorException');
         $contents = call_user_func_array('file_get_contents', func_get_args());
         restore_error_handler();
 
         return $contents;
-    }
-
-    /**
-     * Wrapper for parse_ini_string that throws ErrorExceptions rather than
-     * returning false and throwing a warning.
-     *
-     * @return string The parsed INI string.
-     *
-     * @throws \ParseException Throws an exception when file_get_contents
-     *                               cannot open the file.
-     *
-     * @see \parse_ini_string()
-     */
-    public static function parseIniString()
-    {
-        self::setErrorHandler();
-        $ini = call_user_func_array('parse_ini_string', func_get_args());
-        restore_error_handler();
-
-        return $ini;
-    }
-
-    /**
-     * Sets the error handler.
-     *
-     * @see \set_error_handler(), Parse::errorException()
-     */
-    protected static function setErrorHandler()
-    {
-        set_error_handler(__NAMESPACE__.'\Parse::errorException');
     }
 
     /**
@@ -307,6 +225,49 @@ class Parse
         $eol = implode('', $eola);
 
         return $eol;
+    }
+
+    /**
+     * Calls the parser method with the contents of input and returns the data
+     * in array (or optionally object) form.
+     *
+     * @param string $parser       The fully qualified method to use.
+     * @param string $input        The file or string of data to parse.
+     * @param bool   $isString     Set true to indicate that the data is a
+     *                             string, not a file holding the data.
+     * @param bool   $returnObject Set true to return a \stdClass object.
+     * @param array  $params       Additional parameters to pass to the parser.
+     *
+     * @return array|\stdClass The parsed data.
+     */
+    protected static function parse($parser, $input, $isString = false,
+        $returnObject = false, $params = array()
+    ) {
+        $contents = $isString ? $input : self::fileGetContents($input);
+        $allParams = array_merge(array($contents), $params);
+        $parsed = call_user_func_array($parser, $allParams);
+
+        return $returnObject ? self::arrayToObject($parsed) : $parsed;
+    }
+
+    /**
+     * Returns the fully qualified name of the given parser.
+     *
+     * @param string $name The short name of the desired class.
+     *
+     * @return string|bool The class name or false if the class could not be
+     *                     found or does not implement IParser.
+     */
+    protected static function getParseMethod($name)
+    {
+        $ns = __NAMESPACE__.'\\Parser\\';
+        $cls = $ns.ucfirst(strtolower($name));
+        $mtd = $cls.'::parse';
+
+        $int = $ns.'IParser';
+        $imp = class_implements($cls);
+
+        return (class_exists($cls) && $imp && isset($imp[$int])) ? $mtd : false;
     }
 }
 

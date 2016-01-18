@@ -18,7 +18,7 @@
     },
     "autoload": {
         "psr-4": {
-            "adamblake\\": "src/"
+            "adamblake\\Parse\\": "src/"
         }
     }
 }

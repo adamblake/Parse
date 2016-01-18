@@ -1,0 +1,94 @@
+[zero]
+id = "0001"
+type = "donut"
+name = "Cake"
+ppu = 0.55
+
+[zero.batters.batter.0]
+id = "1001"
+type = "Regular"
+[zero.batters.batter.1]
+id = "1002"
+type = "Chocolate"
+[zero.batters.batter.2]
+id = "1003"
+type = "Blueberry"
+[zero.batters.batter.3]
+id = "1004"
+type = "Devil's Food"
+
+[zero.topping.0]
+id = "5001"
+type = "None"
+[zero.topping.1]
+id = "5002"
+type = "Glazed"
+[zero.topping.2]
+id = "5005"
+type = "Sugar"
+[zero.topping.3]
+id = "5007"
+type = "Powdered Sugar"
+[zero.topping.4]
+id = "5006"
+type = "Chocolate with Sprinkles"
+[zero.topping.5]
+id = "5003"
+type = "Chocolate"
+[zero.topping.6]
+id = "5004"
+type = "Maple"
+
+
+[one] 
+id = "0002"
+type = "donut"
+name = "Raised"
+ppu = 0.55
+
+[one.batters.batter.0]
+id = "1001"
+type = "Regular"
+
+[one.topping.0]
+id = "5001"
+type = "None"
+[one.topping.1]
+id = "5002"
+type = "Glazed"
+[one.topping.2]
+id = "5005"
+type = "Sugar"
+[one.topping.3]
+id = "5003"
+type = "Chocolate"
+[one.topping.4]
+id = "5004"
+type = "Maple"
+
+
+[two]
+id = "0003"
+type = "donut"
+name = "Old Fashioned"
+ppu = 0.55
+
+[two.batters.batter.0]
+id = "1001"
+type = "Regular"
+[two.batters.batter.1]
+id = "1002"
+type = "Chocolate"
+
+[two.topping.0]
+id = "5001"
+type = "None"
+[two.topping.1]
+id = "5002"
+type = "Glazed"
+[two.topping.2]
+id = "5003"
+type = "Chocolate"
+[two.topping.3]
+id = "5004"
+type = "Maple"
