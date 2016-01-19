@@ -66,10 +66,10 @@ class Csv implements IParser
         }
 
         // convert end of line characters to Unix style
-        $csv = preg_replace(array('/\r?\n/', '/\\\n$/'), array('\n', ''), $string);
+        $csv = preg_replace(array('/\r?\n/', '/\n$/'), array("\n", ''), $string);
 
         // split by lines and fields and decode special characters
-        $lines = explode('\n', $csv);
+        $lines = explode("\n", $csv);
 
         return $header ? self::parseLinesWithHeader($lines, $delimiter)
                        : self::parseLinesNoHeader($lines, $delimiter);
@@ -190,8 +190,8 @@ class Csv implements IParser
     protected static function encodeSpecialChars($string)
     {
         $specialChars = array(
-            '\r' => '!!R!!',
-            '\n' => '!!N!!',
+            "\r" => '!!R!!',
+            "\n" => '!!N!!',
             '""' => '!!Q!!',
             ','  => '!!C!!',
         );
@@ -215,8 +215,8 @@ class Csv implements IParser
     protected static function decodeSpecialChars($string)
     {
         $specialChars = array(
-            '\r' => '!!R!!',
-            '\n' => '!!N!!',
+            "\r" => '!!R!!',
+            "\n" => '!!N!!',
             '"' => '!!Q!!',
             ','  => '!!C!!',
         );
