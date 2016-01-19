@@ -1,7 +1,7 @@
 # Parse
 Simple one-off PHP class for parsing files and converting them to arrays.
 Currently supports CSV, JSON, YAML (using symfony/yaml), and INI files and 
-strings. CSV files and strings are parsed according the the RFC (https://tools.ietf.org/html/rfc4180)
+strings. CSV files and strings are parsed according the the [RFC](https://tools.ietf.org/html/rfc4180)
 and support user-defined delimiters and using the header row as keys for
 subsequent rows. JSON, YAML, and INI parsing support nested arrays --- that's
 right even the INIs can have nested arrays. For INIs this is indicated by using
@@ -80,7 +80,7 @@ $data = Parse::csv('path/to/file', false, false, ';', false);
 2. Create your feature branch: ```git checkout -b my-new-feature```
 3. Commit your changes: ```git commit -am 'Add some feature'```
 4. Push to the branch: ```git push origin my-new-feature```
-5. Submit a pull request :D
+5. Submit a [pull request](https://github.com/adamblake/SimpleDb/pulls) :D
 
 # History
 This was a project I (Adam) started writing when I was learning how to use PHP
