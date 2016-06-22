@@ -33,7 +33,7 @@ use adamblake\Parse\ParseException;
  * @copyright (C) 2016 Adam Blake <adamblake@g.ucla.edu>
  * @license http://opensource.org/licenses/GPL-3.0 GNU Public License
  */
-class Ini implements IParser
+class Ini implements ParserInterface
 {
     /**
      * {@inheritdoc}

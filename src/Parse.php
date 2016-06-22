@@ -256,7 +256,7 @@ class Parse
      * @param string $name The short name of the desired class.
      *
      * @return string|bool The class name or false if the class could not be
-     *                     found or does not implement IParser.
+     *                     found or does not implement ParserInterface.
      */
     protected static function getParseMethod($name)
     {
@@ -264,7 +264,7 @@ class Parse
         $cls = $ns.ucfirst(strtolower($name));
         $mtd = $cls.'::parse';
 
-        $int = $ns.'IParser';
+        $int = $ns.'ParserInterface';
         $imp = class_implements($cls);
 
         return (class_exists($cls) && $imp && isset($imp[$int])) ? $mtd : false;

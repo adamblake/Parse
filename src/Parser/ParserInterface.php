@@ -31,7 +31,7 @@ namespace adamblake\Parse\Parser;
  * @copyright (C) 2016 Adam Blake <adamblake@g.ucla.edu>
  * @license http://opensource.org/licenses/GPL-3.0 GNU Public License
  */
-interface IParser
+interface ParserInterface
 {
     /**
      * Return an associative array of the string.
@@ -44,4 +44,3 @@ interface IParser
      */
     public static function parse($string);
 }
-

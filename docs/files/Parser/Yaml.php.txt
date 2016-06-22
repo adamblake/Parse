@@ -34,7 +34,7 @@ use Symfony\Component\Yaml\Yaml;
  * @copyright (C) 2016 Adam Blake <adamblake@g.ucla.edu>
  * @license http://opensource.org/licenses/GPL-3.0 GNU Public License
  */
-class Yaml implements IParser
+class Yaml implements ParserInterface
 {
     /**
      * {@inheritdoc}
