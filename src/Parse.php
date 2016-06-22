@@ -24,6 +24,8 @@
 
 namespace adamblake\Parse;
 
+use adamblake\Parse\Parser\ParserInterface;
+
 /**
  * Collection of static functions for parsing files.
  *
@@ -81,7 +83,7 @@ class Parse
     public static function csv($input, $isString = false, $returnObject = false,
         $delimiter = ',', $header = true
     ) {
-        $parser = self::getParseMethod(__FUNCTION__);
+        $parser = self::getParser(__FUNCTION__);
         $params = array($delimiter, $header);
 
         return self::parse($parser, $input, $isString, $returnObject, $params);
@@ -99,7 +101,7 @@ class Parse
      */
     public static function yaml($input, $isString = false, $returnObject = false)
     {
-        $parser = self::getParseMethod(__FUNCTION__);
+        $parser = self::getParser(__FUNCTION__);
 
         return self::parse($parser, $input, $isString, $returnObject);
     }
@@ -116,7 +118,7 @@ class Parse
      */
     public static function json($input, $isString = false, $returnObject = false)
     {
-        $parser = self::getParseMethod(__FUNCTION__);
+        $parser = self::getParser(__FUNCTION__);
 
         return self::parse($parser, $input, $isString, $returnObject);
     }
@@ -133,7 +135,7 @@ class Parse
      */
     public static function ini($input, $isString = false, $returnObject = false)
     {
-        $parser = self::getParseMethod(__FUNCTION__);
+        $parser = self::getParser(__FUNCTION__);
 
         return self::parse($parser, $input, $isString, $returnObject);
     }
@@ -231,42 +233,43 @@ class Parse
      * Calls the parser method with the contents of input and returns the data
      * in array (or optionally object) form.
      *
-     * @param string $parser       The fully qualified method to use.
-     * @param string $input        The file or string of data to parse.
-     * @param bool   $isString     Set true to indicate that the data is a
-     *                             string, not a file holding the data.
-     * @param bool   $returnObject Set true to return a \stdClass object.
-     * @param array  $params       Additional parameters to pass to the parser.
+     * @param ParserInterface $parser       The Parser to use.
+     * @param string          $input        The file or string of data to parse.
+     * @param bool            $isString     Set true to indicate that the data 
+     *                                      is a string, not a file holding the 
+     *                                      data.
+     * @param bool            $returnObject Set true to return a stdClass object.
+     * @param array           $params       Additional parameters to pass to the
+     *                                      parser.
      *
      * @return array|\stdClass The parsed data.
      */
-    protected static function parse($parser, $input, $isString = false,
-        $returnObject = false, $params = array()
+    protected static function parse(ParserInterface $parser, $input, 
+        $isString = false, $returnObject = false, $params = array()
     ) {
         $contents = $isString ? $input : self::fileGetContents($input);
         $allParams = array_merge(array($contents), $params);
-        $parsed = call_user_func_array($parser, $allParams);
+        $parsed = $parser::parse(...$allParams);
 
         return $returnObject ? self::arrayToObject($parsed) : $parsed;
     }
-
+    
     /**
-     * Returns the fully qualified name of the given parser.
+     * Returns a new instance of the desired parser.
      *
      * @param string $name The short name of the desired class.
-     *
-     * @return string|bool The class name or false if the class could not be
-     *                     found or does not implement ParserInterface.
+     * 
+     * @return ParserInterface Returns the desired Parser.
+     * 
+     * @throws ParseException Throws a ParseException if the parser is missing.
      */
-    protected static function getParseMethod($name)
+    protected static function getParser($name)
     {
-        $ns = __NAMESPACE__.'\\Parser\\';
-        $cls = $ns.ucfirst(strtolower($name));
-        $mtd = $cls.'::parse';
-
-        $int = $ns.'ParserInterface';
-        $imp = class_implements($cls);
-
-        return (class_exists($cls) && $imp && isset($imp[$int])) ? $mtd : false;
+        $class = __NAMESPACE__ . '\\Parser\\' . ucfirst(strtolower($name));
+        if (!class_exists($class)) {
+            throw new ParseException("No Parser class found for '{$class}'.");
+        }
+        
+        return new $class;
     }
 }
