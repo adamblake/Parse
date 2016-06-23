@@ -1,6 +1,6 @@
 <?php
 
-namespace adamblake\Parse;
+namespace adamblake\parse;
 
 /**
  * PHPUnit test class for Parse. Files utilized by this class can be found
@@ -85,7 +85,7 @@ class ParseTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @covers adamblake\Parse::config
+     * @covers adamblake\parse::config
      */
     public function testConfig()
     {
@@ -96,8 +96,8 @@ class ParseTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @covers adamblake\Parse::config
-     * @expectedException adamblake\Parse\ParseException
+     * @covers adamblake\parse::config
+     * @expectedException adamblake\parse\ParseException
      */
     public function testUnsupportedConfig()
     {
@@ -105,7 +105,7 @@ class ParseTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @covers adamblake\Parse::arrayToObject
+     * @covers adamblake\parse::arrayToObject
      */
     public function testArrayToObject()
     {
@@ -117,7 +117,7 @@ class ParseTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @covers adamblake\Parse::fget_contents
+     * @covers adamblake\parse::fget_contents
      */
     public function testFileGetContents()
     {
@@ -126,8 +126,8 @@ class ParseTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @covers adamblake\Parse::fileGetContents
-     * @expectedException adamblake\Parse\ParseException
+     * @covers adamblake\parse::fileGetContents
+     * @expectedException adamblake\parse\ParseException
      */
     public function testFileGetContentsNonexistent()
     {
@@ -135,7 +135,7 @@ class ParseTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @covers adamblake\Parse::getExt
+     * @covers adamblake\parse::getExt
      */
     public function testGetExt()
     {
@@ -144,7 +144,7 @@ class ParseTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @covers adamblake\Parse::detectEol
+     * @covers adamblake\parse::detectEol
      */
     public function testDetectEol()
     {

@@ -1,6 +1,6 @@
 <?php
 
-namespace adamblake\Parse\Parser;
+namespace adamblake\parse\Parser;
 
 class CsvTest extends \PHPUnit_Framework_TestCase
 {
@@ -68,7 +68,7 @@ class CsvTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @covers adamblake\Parse\Csv::parse
+     * @covers adamblake\parse\Csv::parse
      */
     public function testParseValid()
     {
@@ -78,7 +78,7 @@ class CsvTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @covers adamblake\Parse\Csv::parse
+     * @covers adamblake\parse\Csv::parse
      */
     public function testParseEmpty()
     {
@@ -86,8 +86,8 @@ class CsvTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @covers adamblake\Parse\Csv::parse
-     * @expectedException adamblake\Parse\ParseException
+     * @covers adamblake\parse\Csv::parse
+     * @expectedException adamblake\parse\ParseException
      */
     public function testParseInvalid()
     {

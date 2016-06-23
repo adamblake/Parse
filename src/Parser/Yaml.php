@@ -22,9 +22,9 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
 
-namespace adamblake\Parse\Parser;
+namespace adamblake\parse\Parser;
 
-use adamblake\Parse\ParseException;
+use adamblake\parse\ParseException;
 use Symfony\Component\Yaml\Yaml;
 
 /**
@@ -43,7 +43,7 @@ class Yaml implements ParserInterface
      *
      * @return array The parsed data.
      *
-     * @throws adamblake\Parse\ParseException Throws an exception if the string is invalid.
+     * @throws adamblake\parse\ParseException Throws an exception if the string is invalid.
      */
     public static function parse($string)
     {

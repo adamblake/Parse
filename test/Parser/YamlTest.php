@@ -1,6 +1,6 @@
 <?php
 
-namespace adamblake\Parse\Parser;
+namespace adamblake\parse\Parser;
 
 class YamlTest extends \PHPUnit_Framework_TestCase
 {
@@ -123,7 +123,7 @@ class YamlTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @covers adamblake\Parse\Yaml::parse
+     * @covers adamblake\parse\Yaml::parse
      */
     public function testParseValid()
     {
@@ -133,7 +133,7 @@ class YamlTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @covers adamblake\Parse\Yaml::parse
+     * @covers adamblake\parse\Yaml::parse
      */
     public function testParseEmpty()
     {
@@ -141,8 +141,8 @@ class YamlTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @covers adamblake\Parse\Yaml::parse
-     * @expectedException adamblake\Parse\ParseException
+     * @covers adamblake\parse\Yaml::parse
+     * @expectedException adamblake\parse\ParseException
      */
     public function testParseInvalid()
     {

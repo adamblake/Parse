@@ -22,9 +22,9 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
 
-namespace adamblake\Parse\Parser;
+namespace adamblake\parse\Parser;
 
-use adamblake\Parse\ParseException;
+use adamblake\parse\ParseException;
 
 /**
  * Parses INI strings to array.
@@ -42,7 +42,7 @@ class Ini implements ParserInterface
      *
      * @return array The parsed data.
      *
-     * @throws adamblake\Parse\ParseException Throws an exception if the string is invalid.
+     * @throws adamblake\parse\ParseException Throws an exception if the string is invalid.
      */
     public static function parse($string)
     {
@@ -78,7 +78,7 @@ class Ini implements ParserInterface
      */
     public static function parseIniString()
     {
-        set_error_handler('\adamblake\Parse\Parse::errorException');
+        set_error_handler('\adamblake\parse\Parse::errorException');
         $ini = call_user_func_array('parse_ini_string', func_get_args());
         restore_error_handler();
 

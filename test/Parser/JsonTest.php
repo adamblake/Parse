@@ -1,6 +1,6 @@
 <?php
 
-namespace adamblake\Parse\Parser;
+namespace adamblake\parse\Parser;
 
 class JsonTest extends \PHPUnit_Framework_TestCase
 {
@@ -123,7 +123,7 @@ class JsonTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @covers adamblake\Parse\Json::parse
+     * @covers adamblake\parse\Json::parse
      */
     public function testParseValid()
     {
@@ -133,7 +133,7 @@ class JsonTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @covers adamblake\Parse\Json::parse
+     * @covers adamblake\parse\Json::parse
      */
     public function testParseEmpty()
     {
@@ -141,8 +141,8 @@ class JsonTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @covers adamblake\Parse\Json::parse
-     * @expectedException adamblake\Parse\ParseException
+     * @covers adamblake\parse\Json::parse
+     * @expectedException adamblake\parse\ParseException
      */
     public function testParseInvalid()
     {

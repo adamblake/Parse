@@ -1,6 +1,6 @@
 <?php
 
-namespace adamblake\Parse\Parser;
+namespace adamblake\parse\Parser;
 
 class IniTest extends \PHPUnit_Framework_TestCase
 {
@@ -123,7 +123,7 @@ class IniTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @covers adamblake\Parse::parseIniString
+     * @covers adamblake\parse::parseIniString
      */
     public function testParseIniString()
     {
@@ -132,8 +132,8 @@ class IniTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @covers adamblake\Parse::parseIniString
-     * @expectedException adamblake\Parse\ParseException
+     * @covers adamblake\parse::parseIniString
+     * @expectedException adamblake\parse\ParseException
      */
     public function testParseIniStringInvalid()
     {
@@ -141,7 +141,7 @@ class IniTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @covers adamblake\Parse\Ini::parse
+     * @covers adamblake\parse\Ini::parse
      */
     public function testParseValid()
     {
@@ -151,7 +151,7 @@ class IniTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @covers adamblake\Parse\Ini::parse
+     * @covers adamblake\parse\Ini::parse
      */
     public function testParseEmpty()
     {
@@ -159,8 +159,8 @@ class IniTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @covers adamblake\Parse\Ini::parse
-     * @expectedException adamblake\Parse\ParseException
+     * @covers adamblake\parse\Ini::parse
+     * @expectedException adamblake\parse\ParseException
      */
     public function testParseInvalid()
     {

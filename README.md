@@ -46,7 +46,7 @@ following to your composer.json:
 
 # Usage
 ```php
-use adamblake\Parse;
+use adamblake\parse;
 
 // automatically determine config file type from the extension (JSON, YAML, INI)
 $data = Parse::config('path/to/file');

@@ -17,11 +17,11 @@
 <path fill="none" stroke="gray" d="M28,-52C28,-52 347.095,-52 347.095,-52 353.095,-52 359.095,-58 359.095,-64 359.095,-64 359.095,-446 359.095,-446 359.095,-452 353.095,-458 347.095,-458 347.095,-458 28,-458 28,-458 22,-458 16,-452 16,-446 16,-446 16,-64 16,-64 16,-58 22,-52 28,-52"/>
 <text text-anchor="middle" x="187.547" y="-445.2" font-family="Times New Roman,serif" font-size="11.00" fill="gray">adamblake</text>
 </g>
-<g id="clust3" class="cluster"><title>cluster_\adamblake\Parse</title>
+<g id="clust3" class="cluster"><title>cluster_\adamblake\parse</title>
 <path fill="none" stroke="gray" d="M36,-60C36,-60 339.095,-60 339.095,-60 345.095,-60 351.095,-66 351.095,-72 351.095,-72 351.095,-418 351.095,-418 351.095,-424 345.095,-430 339.095,-430 339.095,-430 36,-430 36,-430 30,-430 24,-424 24,-418 24,-418 24,-72 24,-72 24,-66 30,-60 36,-60"/>
 <text text-anchor="middle" x="187.547" y="-417.2" font-family="Times New Roman,serif" font-size="11.00" fill="gray">Parse</text>
 </g>
-<g id="clust4" class="cluster"><title>cluster_\adamblake\Parse\Parser</title>
+<g id="clust4" class="cluster"><title>cluster_\adamblake\parse\Parser</title>
 <path fill="none" stroke="gray" d="M44,-168C44,-168 310.595,-168 310.595,-168 316.595,-168 322.595,-174 322.595,-180 322.595,-180 322.595,-390 322.595,-390 322.595,-396 316.595,-402 310.595,-402 310.595,-402 44,-402 44,-402 38,-402 32,-396 32,-390 32,-390 32,-180 32,-180 32,-174 38,-168 44,-168"/>
 <text text-anchor="middle" x="177.297" y="-389.2" font-family="Times New Roman,serif" font-size="11.00" fill="gray">Parser</text>
 </g>
