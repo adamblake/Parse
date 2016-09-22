@@ -1,10 +1,18 @@
 # Parse
 Simple one-off PHP class for parsing files and converting them to arrays.
 Currently supports CSV, JSON, YAML (using symfony/yaml), and INI files and 
-strings. CSV files and strings are parsed according the the [RFC](https://tools.ietf.org/html/rfc4180)
-and support user-defined delimiters and using the header row as keys for
-subsequent rows. JSON, YAML, and INI parsing support nested arrays --- that's
-right even the INIs can have nested arrays. For INIs this is indicated by using
+strings. All supported types can either be read from file or from an 
+appropriately formed string. All errors thrown during reading and parsing of 
+files are converted to ParseExceptions and thus will not halt the flow of the 
+application, and can be handled easily in try/catch blocks.
+
+CSV files and strings are parsed according to the [RFC](https://tools.ietf.org/html/rfc4180)
+and support user-defined delimiters and enclosures. It is also possible to use
+the first (header) row values as keys for subsequent rows. Note that this goes 
+beyond ```str_getcsv``` which does not parse the rows in a CSV string.
+
+JSON, YAML, and INI parsing support nested arrays --- that's
+right even the INIs can have nested arrays! For INIs this is indicated by using
 dot syntax in sections, i.e. this
 ```ini
 [this.section.is]
@@ -14,17 +22,6 @@ will be parsed as
 ```php
 ["this" => ["section" => ["is" => ["deeply" => "nested"]]]]
 ```
-
-All supported types can either be read from file or from an appropriately formed
-string. Additionally, the data can be returned as an associative array or 
-a series of nested objects, as an added convenience for those who want 
-consistent structure in their applications and need one or the other. (See the 
-Usage section below for more details.)
-
-Finally, another useful feature of this packages is that all errors thrown 
-during reading and parsing of files are converted to ParseExceptions and
-thus will not halt the flow of the application and can be handled easily in
-try/catch blocks.
 
 # Installing
 This class is not on Packagist. Either download the zip and the symfony/yaml 
@@ -52,27 +49,21 @@ use adamblake\parse;
 $data = Parse::config('path/to/file');
 $data['setting'] = 'value';
 
-// parse as json, yaml, ini
+// parse from file as JSON, YAML, INI, CSV
 $data = Parse::json('path/to/file');
 $data = Parse::yaml('path/to/file');
 $data = Parse::ini('path/to/file');
 $data = Parse::csv('path/to/file');
-// see 'CSV extras' below for turning off header or changing delimiters
 
-// read from string instead (only with named parse functions, i.e. not 'config')
+// automatically determine which parser to use for config files (YAML, JSON, INI)
+$data = Parse::config('path/to/file.yaml');
+
+// parse from string input instead of file input using second parameter
 $data = Parse::ini('key=value', true);
 
-// convert the parsed file to an object
-$obj = Parse::parse('path/to/file', true);
-$obj->setting = 'value';
-
-// convert a parsed string to an object
-$data = Parse::ini('key=value', true, true);
-$obj->key = 'value';
-
-// CSV extras
-// parse as csv using semicolon for delimiter and with no header
-$data = Parse::csv('path/to/file', false, false, ';', false);
+// parse string as CSV with no header and using ';' as the delimiter character 
+// and '#' as the enclosure character.
+$data = Parse::csv('path/to/file', true, false, ';', '#');
 ```
 
 # Contributing
