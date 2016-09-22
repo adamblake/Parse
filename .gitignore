@@ -23,6 +23,9 @@ $RECYCLE.BIN/
 composer.phar
 /vendor/
 
+### documentation ###
+docs/
+test/reports/
 
 ### NetBeans ###
 nbproject/
