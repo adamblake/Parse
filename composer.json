@@ -1,20 +1,25 @@
-{
-    "name": "adamblake/parse",
-    "description": "Collection of static functions for parsing files.",
-    "license": "GPL-3.0",
-    "authors": [
-        {
-            "name": "Adam Blake",
-            "email": "theadamattack@gmail.com"
-        }
-    ],
-    "require": {
-        "php": ">=5.6.0",
-        "symfony/yaml": "^3.0"
-    },
-    "autoload": {
-        "psr-4": {
-            "adamblake\\parse\\": "src/"
-        }
+{  
+  "name":"adamblake/parse",
+  "description":"Collection of static functions for parsing files.",
+  "license":"GPL-3.0",
+  "authors":[  
+    {  
+      "name":"Adam Blake",
+      "email":"theadamattack@gmail.com"
     }
+  ],
+  "require":{  
+    "php":">=7.0.0",
+    "symfony/yaml":"^3.0"
+  },
+  "autoload":{  
+    "psr-4":{  
+      "adamblake\\parse\\":"src/"
+    }
+  },
+  "autoload-dev":{  
+    "psr-4":{  
+      "adamblake\\parse\\":"test/"
+    }
+  }
 }

@@ -1,10 +1,10 @@
 <?php
 
 /**
- * Csv parser class.
+ * CSV Parser class.
  *
- * @author Adam Blake <adamblake@g.ucla.edu>
- * @copyright (C) 2016 Adam Blake <adamblake@g.ucla.edu>
+ * @author Adam Blake <theadamattack@gmail.com>
+ * @copyright (C) 2016 Adam Blake <theadamattack@gmail.com>
  * @license http://opensource.org/licenses/GPL-3.0 GNU Public License
  *
  * This program is free software; you can redistribute it and/or
@@ -28,202 +28,211 @@ use adamblake\parse\ParseException;
 
 /**
  * Parses CSV strings to array.
- *
- * @author Adam Blake <adamblake@g.ucla.edu>
- * @copyright (C) 2016 Adam Blake <adamblake@g.ucla.edu>
- * @license http://opensource.org/licenses/GPL-3.0 GNU Public License
+ * 
+ * @author Adam Blake <theadamattack@gmail.com>
+ * @copyright (c) 2016, Adam Blake <theadamattack@gmail.com>
+ * @license https://opensource.org/licenses/GPL-3.0 GNU Public License (GPL-3.0)
  */
 class Csv implements ParserInterface
 {
     /**
      * {@inheritdoc}
-     *
-     * @param string $string    The string of data to parse.
-     * @param string $delimiter The delimiter to use when parsing the data.
-     * @param bool   $header    Set false to parse data without a header.
-     *
-     * @return array The parsed data.
-     *
-     * @throws adamblake\parse\ParseException Throws an exception if the string is invalid.
+     * 
+     * Parses a CSV file into a two-dimensional array where each line of the 
+     * CSV data is an indexed array within the output array.
+     * 
+     * @param string $csv    The CSV data to parse.
+     * @param bool   $header Set FALSE if the data does not have a header row.
+     * @param string $delim  The delimiter used to separate data fields.
+     * @param string $enc    The character used to enclose fields.
+     * 
+     * @return array The two-dimensional array of data.
      */
-    public static function parse($string, $delimiter = ',', $header = true)
-    {
-        // first find enclosed fields and make placeholders for special chars
-        $pos = 0;
-        while ($enc = self::getNextEnclosure($string, $pos)) {
-            // get start of enclosure
-            $encStart = strpos($string, $enc, $pos) - 1;
-
-            // get end of enclosure
-            $encEnd = $encStart + strlen($enc) + 2;
-
-            // encode the enclosure
-            $encodedEnc = self::encodeSpecialChars($enc);
-            $string = substr($string, 0, $encStart) . $encodedEnc . substr($string, $encEnd);
-
-            // update position
-            $pos = $encStart + strlen($encodedEnc);
-        }
-
-        // convert end of line characters to Unix style
-        $csv = preg_replace(array('/\r?\n/', '/\n$/'), array("\n", ''), $string);
-
-        // split by lines and fields and decode special characters
-        $lines = explode("\n", $csv);
-
-        return $header ? self::parseLinesWithHeader($lines, $delimiter)
-                       : self::parseLinesNoHeader($lines, $delimiter);
+    public static function parse(
+        string $csv,
+        bool $header = true,
+        string $delim = ',',
+        string $enc = '"'
+    ): array {
+        $lines = explode("\n", self::encodeEnclosures($csv, $delim, $enc));
+        $parsed = $header ? self::parseLinesWithHeader($lines, $delim, $enc)
+                          : self::parseLinesWithNoHeader($lines, $delim, $enc);
+        
+        return $parsed;
     }
-
+    
     /**
-     * Parses an array of encoded lines using the first line as a header.
-     *
-     * @param array  $lines     The array of encoded strings.
-     * @param string $delimiter The delimiter to use when splitting the fields.
-     *
-     * @return array The array of decoded data.
+     * Parses a CSV file into a two-dimensional array where each line of the 
+     * CSV data is an indexed array within the output array.
+     * 
+     * @param array  $lines  The array of CSV data rows to parse.
+     * @param string $delim  The delimiter used to separate data fields.
+     * @param string $enc    The character used to enclose fields.
+     * 
+     * @return array The two-dimensional array of data.
      */
-    protected static function parseLinesWithHeader(array $lines, $delimiter)
-    {
-        $header = self::parseLine(array_shift($lines), $delimiter);
-        $headerlen = count($header);
-
-        $data = array();
-        foreach ($lines as $line) {
-            $line = self::parseLine($line, $delimiter);
-            self::normalizeRowLength($line, $headerlen);
-            $data[] = array_combine($header, $line);
-        }
-
-        return $data;
-    }
-
-    /**
-     * Parses an array of encoded lines without using the first line as a header.
-     *
-     * @param array  $lines     The array of encoded strings.
-     * @param string $delimiter The delimiter to use when splitting the fields.
-     *
-     * @return array The array of decoded data.
-     */
-    protected static function parseLinesNoHeader(array $lines, $delimiter)
-    {
+    private static function parseLinesWithNoHeader(
+        array $lines,
+        string $delim,
+        string $enc
+    ): array {
         foreach ($lines as &$line) {
-            $line = self::parseLine($line, $delimiter);
+            $line = self::parseEncodedLine($line, $delim, $enc);
         }
-
+            
         return $lines;
     }
-
+    
     /**
-     * Parses a line by splitting by the delimiter and then decoding each field.
-     *
-     * @param string $line      The line of CSV to parse.
-     * @param string $delimiter The delimiter to split by.
-     *
-     * @return array The array of values from the line.
+     * Parses an array of encoded CSV lines into a two-dimensional array using 
+     * the values in the first line as the keys for subsequent lines.
+     * 
+     * @param array $lines   The full array of CSV data to parse.
+     * @param string $delim  The delimiter used to separate data fields.
+     * @param string $enc    The character used to enclose fields.
+     * 
+     * @return array The two-dimensional array of data.
      */
-    protected static function parseLine($line, $delimiter)
-    {
-        $values = explode($delimiter, $line);
-        foreach ($values as &$field) {
-            $field = self::decodeSpecialChars($field);
+    private static function parseLinesWithHeader(
+        array $lines,
+        string $delim,
+        string $enc
+    ): array {
+        $header = self::parseEncodedLine(array_shift($lines), $delim, $enc);
+        $headLen = count($header);
+        foreach ($lines as $i => &$line) {
+            $data = self::parseEncodedLine($line, $delim, $enc);
+            self::checkForLongRow($data, $i + 2, $headLen);
+            $line = array_combine($header, array_pad($data, $headLen, ''));
         }
-
-        return $values;
+        
+        return $lines;
+    }
+    
+    /**
+     * Stops the parse methods if a data row has more fields than the header.
+     * 
+     * @param array $row  The row of data to check.
+     * @param int $lineNo The line number in the CSV file that the row occurs.
+     * @param int $maxLen The maximum length allowed (i.e. length of header).
+     * 
+     * @throws ParseException if a data row has more fields than the header.
+     */
+    private static function checkForLongRow(array $row, int $lineNo, int $maxLen)
+    {
+        if (count($row) > $maxLen) {
+            throw new ParseException("The row of data on line {$lineNo} has "
+                . "more fields than the header. Data: " . json_encode($row));
+        }
+    }
+    
+    /**
+     * Replaces all special characters found in enclosures with markers.
+     * 
+     * Certain characters are important for parsing CSVs: the delimiter, 
+     * the enclosure, line feed, and carriage return. The delimiter, line feed,
+     * and carriage return are allowed within enclosures, and the enclosure
+     * character must be escaped by itself within enclosures. This method
+     * replaces these characters with markers if they are found within
+     * enclosures.
+     * 
+     * @param string $csv   The CSV data to encode.
+     * @param string $delim The delimiter used to separate data fields.
+     * @param string $enc   The character used to enclose fields.
+     * 
+     * @return string The CSV data with enclosures removed and markers inserted.
+     * 
+     * @see decodeMarkers, parseEncodedCsvLine
+     */
+    private static function encodeEnclosures(
+        string $csv,
+        string $delim,
+        string $enc
+    ): string {
+        // Pattern for matching non-enclosed data: ([^"]*)
+        // Pattern for matching enclosed data: (?:"((?:""|[^"])*)")*
+        $pattern = '/([^"]*)(?:"((?:""|[^"])*)")*/s';
+        if ($enc !== '"') { $pattern = str_replace('"', $enc, $pattern); }
+        
+        return preg_replace_callback($pattern, function ($m) use ($delim, $enc) {
+            $enclosed = isset($m[2]) ? self::encodeMarkers($m[2], $delim, $enc) : '';
+            return self::convertToUnixLineEndings($m[1]) . $enclosed;
+        }, $csv);
+    }
+    
+    /**
+     * Encodes special characters as special marker sequences so that they are
+     * not parsed as CSV control characters.
+     * 
+     * @param string $enclosure The enclosure with characters to encode.
+     * @param string $delim     The delimiter used to separate data fields.
+     * @param string $enc       The character used to enclose fields.
+     * 
+     * @return string Returns the string with CSV special characters encoded.
+     */
+    private static function encodeMarkers(string $enclosure, string $delim, string $enc)
+    : string {
+        $characters = [$delim, $enc.$enc, "\n", "\r"];
+        $markers = ['!!D!!', '!!E!!', '!!N!!', '!!R!!'];
+        
+        return str_replace($characters, $markers, $enclosure);
+    }
+    
+    /**
+     * Converts all line endings to Unix-style line endings (LF).
+     * 
+     * @param string $string The string with characters to convert.
+     * 
+     * @return string Returns the string with only Unix-style line endings.
+     */
+    private static function convertToUnixLineEndings(string $string)
+    : string {
+        return str_replace(["\r\n", "\r"], ["\n", "\n"], $string);
+    }
+    
+    /**
+     * Parses and decodes a CSV line encoded with encodeEnclosures().
+     * 
+     * @param string $line  The line of CSV data to parse.
+     * @param string $delim The delimiter used to separate data fields.
+     * @param string $enc   The character used to enclose fields.
+     * 
+     * @return array The indexed array of the CSV data fields.
+     * 
+     * @see encodeEnclosures, decodeMarkers
+     */
+    private static function parseEncodedLine(
+        string $line,
+        string $delim,
+        string $enc
+    ): array {
+        $fields = explode($delim, $line); 
+        foreach ($fields as &$field) {
+            $field = self::decodeMarkers($field, $delim, $enc);
+        }
+        
+        return $fields;
     }
 
     /**
-     * Returns the text inside the next CSV enclosure.
-     * @param string $string The string to search.
-     * @param int    $pos    The start position for the search.
-     *
-     * @return bool|string Returns the text within the next enclosure (not
-     *                     including the enclosure) or false if there are none.
-     *
-     * @throws ParseException Throws an exception if an enclosure is opened in
-     *                        the string but is not properly closed.
+     * Restores markers to the appropriate special characters.
+     * 
+     * @param string $field The field to decode.
+     * @param string $delim The delimiter used to separate data fields.
+     * @param string $enc   The character used to enclose fields.
+     * 
+     * @return string The data field with special characters restored.
+     * 
+     * @see encodeEnclosures
      */
-    protected static function getNextEnclosure($string, $pos = 0)
-    {
-        $start = strpos($string, '"', $pos);
-        if ($start === false) {
-            return false;
-        }
-
-        $matches = array();
-        $pattern = '/(?:[^"]*)"((?:""|[^"])*)"/';
-
-        if (!preg_match($pattern, $string, $matches, 0, $start)) {
-            throw new ParseException('The given data is not valid CSV.');
-        }
-
-        return $matches[1];
-    }
-
-    /**
-     * Converts the given array to the specified length.
-     *
-     * @param array $array The array to modify.
-     * @param int   $len   The length to match.
-     */
-    protected static function normalizeRowLength(array &$array, $len)
-    {
-        if (count($array) > $len) {
-            $array = array_slice($array, 0, $len);
-        }
-
-        while (count($array) < $len) {
-            $array[] = '';
-        }
-    }
-
-    /**
-     * Encodes CSV special characters to placeholder values.
-     *
-     * @param string $string The string to encode.
-     *
-     * @return string Returns the encoded string.
-     *
-     * @uses Csv::specialChars
-     */
-    protected static function encodeSpecialChars($string)
-    {
-        $specialChars = array(
-            "\r" => '!!R!!',
-            "\n" => '!!N!!',
-            '""' => '!!Q!!',
-            ','  => '!!C!!',
-        );
-        foreach ($specialChars as $char => $enc) {
-            $string = str_replace($char, $enc, $string);
-        }
-
-        return $string;
-    }
-
-    /**
-     * Decodes a string encoded using Csv::encodeSpecialChars.
-     *
-     * @param string $string The string to decode.
-     *
-     * @return string Returns the decoded string.
-     *
-     * @see Csv::encodeSpecialChars
-     * @uses Csv::specialChars
-     */
-    protected static function decodeSpecialChars($string)
-    {
-        $specialChars = array(
-            "\r" => '!!R!!',
-            "\n" => '!!N!!',
-            '"' => '!!Q!!',
-            ','  => '!!C!!',
-        );
-        foreach ($specialChars as $char => $enc) {
-            $string = str_replace($enc, $char, $string);
-        }
-
-        return $string;
+    private static function decodeMarkers(
+        string $field,
+        string $delim,
+        string $enc
+    ): string {
+        $markers = ['!!D!!', '!!E!!', '!!N!!', '!!R!!'];
+        $characters = [$delim, $enc, "\n", "\r"];
+        
+        return str_replace($markers, $characters, $field);
     }
 }

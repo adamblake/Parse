@@ -3,8 +3,8 @@
 /**
  * ParseException class.
  *
- * @author Adam Blake <adamblake@g.ucla.edu>
- * @copyright (C) 2014 Adam Blake <adamblake@g.ucla.edu>
+ * @author Adam Blake <theadamattack@gmail.com>
+ * @copyright (C) 2014 Adam Blake <theadamattack@gmail.com>
  * @license http://opensource.org/licenses/GPL-3.0 GNU Public License
  *
  * This program is free software; you can redistribute it and/or
@@ -27,8 +27,8 @@ namespace adamblake\parse;
 /**
  * Simple Exception class that throws ErrorExceptions.
  *
- * @author Adam Blake <adamblake@g.ucla.edu>
- * @copyright (C) 2014 Adam Blake <adamblake@g.ucla.edu>
+ * @author Adam Blake <theadamattack@gmail.com>
+ * @copyright (C) 2014 Adam Blake <theadamattack@gmail.com>
  * @license http://opensource.org/licenses/GPL-3.0 GNU Public License
  */
 class ParseException extends \ErrorException
@@ -40,20 +40,44 @@ class ParseException extends \ErrorException
      * @param int        $code     The Exception code.
      * @param int        $severity The severity level of the exception.
      * @param string     $filename The filename where the exception is thrown.
-     * @param int        $lineno   The line number where the exception is thrown.
-     * @param \Exception $previous The previous exception used for the exception chaining.
+     * @param int        $line     The line number where the exception is thrown.
+     * @param \Exception $prev     The previous exception --- used for exception chaining.
      *
      * @throws ParseException Exception thrown with default message if none passed.
      */
-    public function __construct($message, $code = 0, $severity = 1, $filename = __FILE__,
-            $lineno = __LINE__, \Exception $previous = null
+    public function __construct(
+        string $message = '',
+        int $code = 0,
+        int $severity = 1,
+        string $filename = __FILE__,
+        int $line = __LINE__,
+        \Exception $prev = null
     ) {
-        // handle omitted message
         if (!$message) {
             throw new $this('Unknown '.get_class($this));
         }
 
-        parent::__construct($message, $code, $severity, $filename, $lineno, $previous);
+        parent::__construct($message, $code, $severity, $filename, $line, $prev);
+    }
+    
+    /**
+     * Error handler that throws ErrorExceptions instead of warnings.
+     *
+     * @param int    $num  The error number.
+     * @param string $str  The error string.
+     * @param string $file The file the error occurred in.
+     * @param int    $line The line of the file the error occurred in.
+     *
+     * @return bool Returns false if the error was suppressed.
+     *
+     * @throws ParseException Errors are redirected through this exception.
+     */
+    public static function errorHandler(int $num, string $str, string $file, int $line)
+    {
+        // error was suppressed with the @-operator
+        // if (0 === error_reporting()) { return false; }
+
+        throw new ParseException($str, 0, $num, $file, $line);
     }
 }
 

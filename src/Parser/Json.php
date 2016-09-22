@@ -3,8 +3,8 @@
 /**
  * Json parser class.
  *
- * @author Adam Blake <adamblake@g.ucla.edu>
- * @copyright (C) 2016 Adam Blake <adamblake@g.ucla.edu>
+ * @author Adam Blake <theadamattack@gmail.com>
+ * @copyright (C) 2016 Adam Blake <theadamattack@gmail.com>
  * @license http://opensource.org/licenses/GPL-3.0 GNU Public License
  *
  * This program is free software; you can redistribute it and/or
@@ -29,8 +29,8 @@ use adamblake\parse\ParseException;
 /**
  * Parses JSON strings to array.
  *
- * @author Adam Blake <adamblake@g.ucla.edu>
- * @copyright (C) 2016 Adam Blake <adamblake@g.ucla.edu>
+ * @author Adam Blake <theadamattack@gmail.com>
+ * @copyright (C) 2016 Adam Blake <theadamattack@gmail.com>
  * @license http://opensource.org/licenses/GPL-3.0 GNU Public License
  */
 class Json implements ParserInterface
@@ -42,22 +42,22 @@ class Json implements ParserInterface
      *
      * @return array The parsed data.
      *
-     * @throws adamblake\parse\ParseException Throws an exception if the string is invalid.
+     * @throws ParseException if the string is invalid JSON.
      */
-    public static function parse($string)
+    public static function parse(string $string): array
     {
-        $json = json_decode(trim($string), true);
-        $error = json_last_error();
+        if (!empty($string)) {
+            $json = json_decode(trim($string), true);
+            $error = json_last_error();
+        }
 
-        if (null === $json) {
-            // empty file
+        if (!isset($json)) {
             $json = [];
         }
 
-        if (JSON_ERROR_NONE !== $error) {
-            // error occurred
-            throw new ParseException(sprintf('Failed to parse JSON '
-                ."file '%s', error: '%s'", $string, json_last_error_msg()));
+        if (isset($error) && $error !== JSON_ERROR_NONE) {
+            throw new ParseException(sprintf("Failed to parse JSON string '%s',"
+                . " error: '%s'", $string, json_last_error_msg()));
         }
 
         return $json;

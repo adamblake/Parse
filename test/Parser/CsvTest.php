@@ -2,95 +2,174 @@
 
 namespace adamblake\parse\Parser;
 
-class CsvTest extends \PHPUnit_Framework_TestCase
+use adamblake\parse\ParseException;
+
+class CsvTest extends ParserTestFramework
 {
     /**
-     * The object to test.
-     * @var Json
+     * {@inheritdoc}
+     * 
+     * @return string The type of Parser.
      */
-    protected $object;
-
-    /**
-     * The directory where the supplemental test files are located
-     * @var string
-     */
-    protected $filesDir;
-
-    /**
-     * The array of filenames for the supplemental test files.
-     * @var array
-     */
-    protected $files;
-
+    protected function getType()
+    : string {
+        return 'csv';
+    }
+    
     /**
      * The array of data in the 'valid' test file.
      * @var array
      */
-    protected $data;
+    protected $data = [
+        ['id' => '0000', 'name' => 'Adam', 'sentence' => 'has, a comma'],
+        ['id' => '0001', 'name' => 'Brad', 'sentence' => '"is quoted"'],
+    ];
 
     /**
-     * Sets up the fixture, for example, opens a network connection.
-     * This method is called before a test is executed.
+     * @covers adamblake\parse\Parser\Csv::parse
+     * @covers adamblake\parse\Parser\Csv::parseLinesWithNoHeader
+     * @covers adamblake\parse\Parser\Csv::parseEncodedLine
      */
-    protected function setUp()
+    public function testParsesSimpleCsvData()
     {
-        $this->object = 'Csv';
-
-        $this->filesDir = dirname(__FILE__).'/files/csv';
-
-        $this->files = array(
-            'valid' => $this->filesDir.'/valid',
-            'empty' => $this->filesDir.'/empty',
-            'invalid' => $this->filesDir.'/invalid',
-        );
-
-        $this->data = array(
-            array('id' => '0000', 'name' => 'Adam', 'age' => '25', 'color' => 'blue', 'sentence' => 'has, a comma'),
-            array('id' => '0001', 'name' => 'Brad', 'age' => '24', 'color' => 'green', 'sentence' => '""is quoted""'),
-            array('id' => '0002', 'name' => 'Carl', 'age' => '26', 'color' => 'yellow', 'sentence' => ''),
-            array('id' => '0003', 'name' => 'Dave', 'age' => '24', 'color' => 'green', 'sentence' => ''),
-        );
+        $actual = Csv::parse('this,has,commas', false);
+        $this->assertEquals([['this', 'has', 'commas']], $actual);
     }
-
+    
     /**
-     * Calls the object's parse method with the contents of the passed file.
-     *
-     * @param string $filename The file to parse.
-     *
-     * @return string The array of the parsed file contents.
+     * @covers adamblake\parse\Parser\Csv::parse
      */
-    protected function parse($filename)
+    public function testCanParseCsvDataWithCustomDelimiters()
     {
-        $string = file_get_contents($filename);
-        $method = __NAMESPACE__.'\\'.$this->object.'::parse';
-
-        return call_user_func_array($method, [$string]);
+        $actual = Csv::parse('this;has;semicolons', false, ';');
+        $this->assertEquals([['this', 'has', 'semicolons']], $actual);
     }
-
+    
     /**
-     * @covers adamblake\parse\Csv::parse
+     * @covers adamblake\parse\Parser\Csv::parse
      */
-    public function testParseValid()
+    public function testParsesCsvDataWithSpaces()
     {
-        $actual = $this->parse($this->files['valid']);
-
-        $this->assertEquals($this->data, $actual);
+        $actual = Csv::parse("this has, spaces", false);
+        $this->assertEquals([['this has', ' spaces']], $actual);
     }
-
+    
     /**
-     * @covers adamblake\parse\Csv::parse
+     * @covers adamblake\parse\Parser\Csv::encodeEnclosures
+     * @covers adamblake\parse\Parser\Csv::parseEncodedLine
+     * @covers adamblake\parse\Parser\Csv::decodeMarkers
+     * @covers adamblake\parse\Parser\Csv::encodeMarkers
      */
-    public function testParseEmpty()
+    public function testParsesCsvDataWithEnclosures()
     {
-        $this->assertEmpty($this->parse($this->files['empty']));
+        $actual = Csv::parse('"enclosed","data","here"', false);
+        $this->assertEquals([['enclosed', 'data', 'here']], $actual);
     }
-
+    
     /**
-     * @covers adamblake\parse\Csv::parse
-     * @expectedException adamblake\parse\ParseException
+     * @covers adamblake\parse\Parser\Csv::encodeEnclosures
+     * @covers adamblake\parse\Parser\Csv::parseEncodedLine
+     * @covers adamblake\parse\Parser\Csv::decodeMarkers
+     * @covers adamblake\parse\Parser\Csv::encodeMarkers
      */
-    public function testParseInvalid()
+    public function testParsesCsvDataWithDelimiterInEnclosure()
     {
-        $this->parse($this->files['invalid']);
+        $actual = Csv::parse('some,"text,with",comma', false);
+        $this->assertEquals([['some', 'text,with', 'comma']], $actual);
+    }
+    
+    /**
+     * @covers adamblake\parse\Parser\Csv::encodeEnclosures
+     * @covers adamblake\parse\Parser\Csv::parseEncodedLine
+     * @covers adamblake\parse\Parser\Csv::decodeMarkers
+     * @covers adamblake\parse\Parser\Csv::encodeMarkers
+     */
+    public function testCanParseCsvWithCustomEnclosures()
+    {
+        $actual = Csv::parse('#enclosed#,#data#,#here#', false, ',', '#');
+        $this->assertEquals([['enclosed', 'data', 'here']], $actual);
+    }
+    
+    /**
+     * @covers adamblake\parse\Parser\Csv::encodeEnclosures
+     * @covers adamblake\parse\Parser\Csv::parseEncodedLine
+     * @covers adamblake\parse\Parser\Csv::decodeMarkers
+     * @covers adamblake\parse\Parser\Csv::encodeMarkers
+     */
+    public function testCanParseCsvWithSpecialCharacters()
+    {
+        $actual = Csv::parse("\"special\r\n,chars\",\"here\"\"\"", false);
+        $this->assertEquals([["special\r\n,chars", 'here"']], $actual);
+    }
+    
+    /**
+     * @covers adamblake\parse\Parser\Csv::parse
+     */
+    public function testCanParseCsvWithMultipleRowsSplitByLF()
+    {
+        $actual = Csv::parse("a,b,c\nd,e,f", false);
+        $this->assertEquals([['a','b','c'], ['d','e','f']], $actual);
+    }
+    
+    /**
+     * @covers adamblake\parse\Parser\Csv::convertToUnixLineEndings
+     */
+    public function testCanParseCsvWithMultipleRowsSplitByCRLF()
+    {
+        $actual = Csv::parse("a,b,c\r\nd,e,f", false);
+        $this->assertEquals([['a','b','c'], ['d','e','f']], $actual);
+    }
+    
+    /**
+     * @covers adamblake\parse\Parser\Csv::convertToUnixLineEndings
+     */
+    public function testCanParseCsvWithMultipleRowsSplitByCR()
+    {
+        $actual = Csv::parse("a,b,c\rd,e,f", false);
+        $this->assertEquals([['a','b','c'], ['d','e','f']], $actual);
+    }
+    
+    /**
+     * @covers adamblake\parse\Parser\Csv::parseLinesWithHeader
+     */
+    public function testCanParseCsvWithHeader()
+    {
+        $actual = Csv::parse("a,b,c\nd,e,f\ng,h,i");
+        $this->assertEquals([
+            ['a' => 'd','b' => 'e','c' => 'f'],
+            ['a' => 'g','b' => 'h','c' => 'i'],
+        ], $actual);
+    }
+    
+    /**
+     * @covers adamblake\parse\Parser\Csv::parse
+     */
+    public function testParseEmptyCsvReturnsEmptyArray()
+    {
+        $actual = Csv::parse('');
+        $this->assertInternalType('array', $actual);
+        $this->assertEmpty($actual);
+    }
+    
+    /**
+     * @covers adamblake\parse\Parser\Csv::parseLinesWithHeader
+     */
+    public function testRowsWithEmptyCellsShouldStillHaveHeaderKeys()
+    {
+        $actual = Csv::parse("a,b,c\nd,e,f\ng");
+        $this->assertEquals([
+            ['a' => 'd','b' => 'e','c' => 'f'],
+            ['a' => 'g','b' => '','c' => ''],
+        ], $actual);
+    }
+    
+    /**
+     * @covers adamblake\parse\Parser\Csv::checkForLongRow
+     */
+    public function testRowsLongerThanHeaderShouldThrowExceptionWithRowNumber()
+    {
+        $this->expectException(ParseException::class);
+        $this->expectExceptionMessageRegExp('/line 3/');
+        Csv::parse("a,b,c\nd,e,f\ng,h,i,j");
     }
 }

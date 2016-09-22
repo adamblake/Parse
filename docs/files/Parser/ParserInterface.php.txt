@@ -3,8 +3,8 @@
 /**
  * Parser interface.
  *
- * @author Adam Blake <adamblake@g.ucla.edu>
- * @copyright (C) 2016 Adam Blake <adamblake@g.ucla.edu>
+ * @author Adam Blake <theadamattack@gmail.com>
+ * @copyright (C) 2016 Adam Blake <theadamattack@gmail.com>
  * @license http://opensource.org/licenses/GPL-3.0 GNU Public License
  *
  * This program is free software; you can redistribute it and/or
@@ -27,21 +27,21 @@ namespace adamblake\parse\Parser;
 /**
  * Parser interface.
  *
- * @author Adam Blake <adamblake@g.ucla.edu>
- * @copyright (C) 2016 Adam Blake <adamblake@g.ucla.edu>
+ * @author Adam Blake <theadamattack@gmail.com>
+ * @copyright (C) 2016 Adam Blake <theadamattack@gmail.com>
  * @license http://opensource.org/licenses/GPL-3.0 GNU Public License
  */
 interface ParserInterface
 {
     /**
-     * Return an associative array of the string.
+     * Returns an associative array of the string.
      * For types with keys (YAML, JSON, INI) the keys should be used as array
      * keys and the data nested appropriately. For row - column types (CSV, DAT)
-     * the first row should be interpretted as the column names and used as keys
+     * the first row should be interpreted as the column names and used as keys
      * for each row.
      *
      * @param string $string The string of data to parse.
      */
-    public static function parse($string);
+    public static function parse(string $string): array;
 }
 

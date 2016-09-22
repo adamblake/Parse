@@ -3,8 +3,8 @@
 /**
  * Ini parser class.
  *
- * @author Adam Blake <adamblake@g.ucla.edu>
- * @copyright (C) 2016 Adam Blake <adamblake@g.ucla.edu>
+ * @author Adam Blake <theadamattack@gmail.com>
+ * @copyright (C) 2016 Adam Blake <theadamattack@gmail.com>
  * @license http://opensource.org/licenses/GPL-3.0 GNU Public License
  *
  * This program is free software; you can redistribute it and/or
@@ -29,8 +29,8 @@ use adamblake\parse\ParseException;
 /**
  * Parses INI strings to array.
  *
- * @author Adam Blake <adamblake@g.ucla.edu>
- * @copyright (C) 2016 Adam Blake <adamblake@g.ucla.edu>
+ * @author Adam Blake <theadamattack@gmail.com>
+ * @copyright (C) 2016 Adam Blake <theadamattack@gmail.com>
  * @license http://opensource.org/licenses/GPL-3.0 GNU Public License
  */
 class Ini implements ParserInterface
@@ -42,31 +42,18 @@ class Ini implements ParserInterface
      *
      * @return array The parsed data.
      *
-     * @throws adamblake\parse\ParseException Throws an exception if the string is invalid.
+     * @throws ParseException if the string is invalid INI.
      */
-    public static function parse($string)
+    public static function parse(string $string): array
     {
-        $ini = self::parseIniString(trim($string), true);
+        $ini = self::parseIniString(trim($string), true) ?? [];
+        $unpacked = self::unpackNestedKeys($ini);
 
-        if (null === $ini) {
-            // empty file
-            $ini = [];
-        }
-
-        if (!is_array($ini)) {
-            // not an array
-            throw new ParseException(sprintf('The file "%s" must '
-                .'have a valid INI structure.', $string));
-        }
-
-        // multidimensional inis
-        self::fixIniMulti($ini);
-
-        return $ini;
+        return $unpacked;
     }
 
     /**
-     * Wrapper for parse_ini_string that throws ErrorExceptions rather than
+     * Wrapper for parse_ini_string that throws ParseExceptions rather than
      * returning false and throwing a warning.
      *
      * @return string The parsed INI string.
@@ -78,7 +65,7 @@ class Ini implements ParserInterface
      */
     public static function parseIniString()
     {
-        set_error_handler('\adamblake\parse\Parse::errorException');
+        set_error_handler(ParseException::class . '::errorHandler');
         $ini = call_user_func_array('parse_ini_string', func_get_args());
         restore_error_handler();
 
@@ -88,25 +75,41 @@ class Ini implements ParserInterface
     /**
      * Unpacks nested INI sections/arrays.
      *
-     * @param array $ini_arr The INI array to unpack.
+     * @param array $ini The INI array with keys to unpack.
      */
-    protected static function fixIniMulti(array &$ini_arr)
-    {
-        foreach ($ini_arr as $key => &$value) {
-            if (is_array($value)) {
-                self::fixIniMulti($value);
-            }
-            if (false !== strpos($key, '.')) {
-                $key_arr = explode('.', $key);
-                $last_key = array_pop($key_arr);
-                $cur_elem = &$ini_arr;
-                foreach ($key_arr as $key_step) {
-                    $cur_elem[$key_step] = !isset($cur_elem[$key_step]) ? array() : $cur_elem[$key_step];
-                    $cur_elem = &$cur_elem[$key_step];
-                }
-                $cur_elem[$last_key] = $value;
-                unset($ini_arr[$key]);
+    private static function unpackNestedKeys(array $ini)
+    : array {
+        foreach ($ini as $key => $value) {
+            if (strpos($key, '.') !== false) {
+                $ini = array_merge_recursive($ini, self::nest($key, $value));
+                unset($ini[$key]);
             }
         }
+        
+        return $ini;
+    }
+    
+    /**
+     * Nests a value deeply according to the keys specified in the dot string.
+     * 
+     * The keys for each nested array should be specified in the dot string
+     * delimited by dots ('.'). For example, 'name.first' should yield a nested
+     * array of ['name' => ['first' => $value]] where $value is the value passed
+     * as the second argument.
+     * 
+     * @param string $dotString The string specifying the nested structure.
+     * @param mixed  $value     The value assigned to the deepest key.
+     * 
+     * @return array The nested array with the value stored at the deepest key.
+     */
+    private static function nest(string $dotString, $value)
+    : array {
+        $keys = explode('.', $dotString);
+        $nest = [array_pop($keys) => $value];
+        foreach (array_reverse($keys) as $key) {
+            $nest = [$key => $nest];
+        }
+        
+        return $nest;
     }
 }

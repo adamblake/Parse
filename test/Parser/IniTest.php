@@ -2,168 +2,77 @@
 
 namespace adamblake\parse\Parser;
 
-class IniTest extends \PHPUnit_Framework_TestCase
+use adamblake\parse\ParseException;
+
+class IniTest extends ParserTestFramework
 {
     /**
-     * The object to test.
-     * @var Json
+     * {@inheritdoc}
+     * 
+     * @return string The type of Parser.
      */
-    protected $object;
-
-    /**
-     * The directory where the supplemental test files are located
-     * @var string
-     */
-    protected $filesDir;
-
-    /**
-     * The array of filenames for the supplemental test files.
-     * @var array
-     */
-    protected $files;
-
-    /**
-     * The array of data in the 'valid' test file.
-     * @var array
-     */
-    protected $data;
-
-    /**
-     * Sets up the fixture, for example, opens a network connection.
-     * This method is called before a test is executed.
-     */
-    protected function setUp()
-    {
-        $this->object = 'Ini';
-
-        $this->filesDir = dirname(__FILE__).'/files/ini';
-
-        $this->files = array(
-            'valid' => $this->filesDir.'/valid',
-            'empty' => $this->filesDir.'/empty',
-            'invalid' => $this->filesDir.'/invalid',
-        );
-
-        $this->data = array(
-            'zero' => array(
-                'id' => '0001',
-                'type' => 'donut',
-                'name' => 'Cake',
-                'ppu' => 0.55,
-                'batters' => array(
-                    'batter' => array(
-                        array('id' => '1001', 'type' => 'Regular'),
-                        array('id' => '1002', 'type' => 'Chocolate'),
-                        array('id' => '1003', 'type' => 'Blueberry'),
-                        array('id' => '1004', 'type' => "Devil's Food"),
-                    ),
-                ),
-                'topping' => array(
-                    array('id' => '5001', 'type' => 'None'),
-                    array('id' => '5002', 'type' => 'Glazed'),
-                    array('id' => '5005', 'type' => 'Sugar'),
-                    array('id' => '5007', 'type' => 'Powdered Sugar'),
-                    array('id' => '5006', 'type' => 'Chocolate with Sprinkles'),
-                    array('id' => '5003', 'type' => 'Chocolate'),
-                    array('id' => '5004', 'type' => 'Maple'),
-                ),
-            ),
-            'one' => array(
-                'id' => '0002',
-                'type' => 'donut',
-                'name' => 'Raised',
-                'ppu' => 0.55,
-                'batters' => array(
-                    'batter' => array(
-                        array('id' => '1001', 'type' => 'Regular'),
-                    ),
-                ),
-                'topping' => array(
-                    array('id' => '5001', 'type' => 'None'),
-                    array('id' => '5002', 'type' => 'Glazed'),
-                    array('id' => '5005', 'type' => 'Sugar'),
-                    array('id' => '5003', 'type' => 'Chocolate'),
-                    array('id' => '5004', 'type' => 'Maple'),
-                ),
-            ),
-            'two' => array(
-                'id' => '0003',
-                'type' => 'donut',
-                'name' => 'Old Fashioned',
-                'ppu' => 0.55,
-                'batters' => array(
-                    'batter' => array(
-                        array('id' => '1001', 'type' => 'Regular'),
-                        array('id' => '1002', 'type' => 'Chocolate'),
-                    ),
-                ),
-                'topping' => array(
-                    array('id' => '5001', 'type' => 'None'),
-                    array('id' => '5002', 'type' => 'Glazed'),
-                    array('id' => '5003', 'type' => 'Chocolate'),
-                    array('id' => '5004', 'type' => 'Maple'),
-                ),
-            ),
-        );
+    protected function getType()
+    : string {
+        return 'ini';
     }
-
+    
     /**
-     * Calls the object's parse method with the contents of the passed file.
-     *
-     * @param string $filename The file to parse.
-     *
-     * @return string The array of the parsed file contents.
+     * @covers adamblake\parse\Parser\Ini::parse
      */
-    protected function parse($filename)
+    public function testParseEmptyStringReturnsEmptyArray()
     {
-        $string = file_get_contents($filename);
-        $method = __NAMESPACE__.'\\'.$this->object.'::parse';
-
-        return call_user_func_array($method, [$string]);
+        $actual = Ini::parse('');
+        $this->assertInternalType('array', $actual);
+        $this->assertEmpty($actual);
     }
-
+    
     /**
-     * @covers adamblake\parse::parseIniString
+     * @covers adamblake\parse\Parser\Ini::parseIniString
      */
-    public function testParseIniString()
+    public function testParseIniStringReturnsSameInputAsWrappedFunction()
     {
-        $test = Ini::parseIniString('key=value');
-        $this->assertEquals(array('key' => 'value'), $test);
+        $test = 'key=value';
+        $this->assertEquals(parse_ini_string($test), Ini::parseIniString($test));
     }
-
+    
     /**
-     * @covers adamblake\parse::parseIniString
-     * @expectedException adamblake\parse\ParseException
+     * @covers adamblake\parse\Parser\Ini::parseIniString
      */
-    public function testParseIniStringInvalid()
+    public function testParseIniStringInvalidThrowsExceptionNotError()
     {
+        $this->expectException(ParseException::class);
         Ini::parseIniString('[');
     }
-
+    
     /**
-     * @covers adamblake\parse\Ini::parse
+     * @covers adamblake\parse\Parser\Ini::parse
      */
-    public function testParseValid()
+    public function testParseIniStringWithMultipleKeys()
     {
-        $actual = $this->parse($this->files['valid']);
-
-        $this->assertEquals($this->data, $actual);
+        $actual = Ini::parse("id=0\nname=Adam\nphrase=\"Here's me\"");
+        $expected = ['id' => 0, 'name' => 'Adam', 'phrase' => "Here's me"];
+        $this->assertEquals($expected, $actual);
     }
-
+    
     /**
-     * @covers adamblake\parse\Ini::parse
+     * @covers adamblake\parse\Parser\Ini::unpackNestedKeys
+     * @covers adamblake\parse\Parser\Ini::nest
      */
-    public function testParseEmpty()
+    public function testParseSinglyNestedIniData()
     {
-        $this->assertEmpty($this->parse($this->files['empty']));
+        $actual = Ini::parse("0.name=Adam");
+        $expected = [0 => ['name' => 'Adam']];
+        $this->assertEquals($expected, $actual);
     }
-
+    
     /**
-     * @covers adamblake\parse\Ini::parse
-     * @expectedException adamblake\parse\ParseException
+     * @covers adamblake\parse\Parser\Ini::unpackNestedKeys
+     * @covers adamblake\parse\Parser\Ini::nest
      */
-    public function testParseInvalid()
+    public function testParseDoublyNestedIniData()
     {
-        $this->parse($this->files['invalid']);
+        $actual = Ini::parse("0.name.first=Adam");
+        $expected = [0 => ['name' => ['first' => 'Adam']]];
+        $this->assertEquals($expected, $actual);
     }
 }

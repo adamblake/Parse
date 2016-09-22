@@ -3,8 +3,8 @@
 /**
  * Parse class.
  *
- * @author Adam Blake <adamblake@g.ucla.edu>
- * @copyright (C) 2016 Adam Blake <adamblake@g.ucla.edu>
+ * @author Adam Blake <theadamattack@gmail.com>
+ * @copyright (C) 2016 Adam Blake <theadamattack@gmail.com>
  * @license http://opensource.org/licenses/GPL-3.0 GNU Public License
  *
  * This program is free software; you can redistribute it and/or
@@ -24,11 +24,13 @@
 
 namespace adamblake\parse;
 
+use adamblake\parse\Parser\ParserInterface;
+
 /**
  * Collection of static functions for parsing files.
  *
- * @author Adam Blake <adamblake@g.ucla.edu>
- * @copyright (C) 2016 Adam Blake <adamblake@g.ucla.edu>
+ * @author Adam Blake <theadamattack@gmail.com>
+ * @copyright (C) 2016 Adam Blake <theadamattack@gmail.com>
  * @license http://opensource.org/licenses/GPL-3.0 GNU Public License
  */
 class Parse
@@ -37,22 +39,21 @@ class Parse
      * Parses a configuration file and returns an associative array.
      *
      * @param string $filename     The configuration file to parse.
-     * @param bool   $returnObject Set true to return a \stdClass object.
      *
      * @return array|\stdClass Associative array or class of the configurations.
      *
-     * @throws ParseException An exception is thrown for unsupported files.
+     * @throws ParseException if the file type is unsupported.
      */
-    public static function config($filename, $returnObject = false)
+    public static function config($filename): array
     {
         $ext = strtolower(self::getExt($filename));
 
         if ('yml' === $ext || 'yaml' === $ext) {
-            $config = self::yaml($filename, false, $returnObject);
+            $config = self::yaml($filename, false);
         } elseif ('json' === $ext) {
-            $config = self::json($filename, false, $returnObject);
+            $config = self::json($filename, false);
         } elseif ('ini' === $ext) {
-            $config = self::ini($filename, false, $returnObject);
+            $config = self::ini($filename, false);
         }
 
         if (!isset($config)) {
@@ -66,25 +67,29 @@ class Parse
 
     /**
      * Parses a CSV file or string.
-     * The first row will be interpretted as a header row and the values used
+     * The first row will be interpreted as a header row and the values used
      * as keys (column names) for the subsequent rows).
      *
-     * @param string $input        The file or string of data to parse.
-     * @param bool   $isString     Set true to indicate that the data is a
+     * @param string $input        The file or string of CSV data to parse.
+     * @param bool   $isString     Set TRUE to indicate that the data is a
      *                             string, not a file holding the data.
-     * @param bool   $returnObject Set true to return a \stdClass object.
-     * @param string $delimiter    The delimiter to use when parsing the data.
-     * @param bool   $header       Set false to parse data without a header.
+     * @param bool   $header       Set FALSE to parse data without a header.
+     * @param string $delimiter    The delimiter used to separate data fields.
+     * @param string $enclosure    The character used to enclose fields.
      *
-     * @return array|\stdClass The parsed data.
+     * @return array The parsed data.
      */
-    public static function csv($input, $isString = false, $returnObject = false,
-        $delimiter = ',', $header = true
-    ) {
-        $parser = self::getParseMethod(__FUNCTION__);
-        $params = array($delimiter, $header);
+    public static function csv(
+        string $input,
+        bool $isString = false,
+        bool $header = true,
+        string $delimiter = ',',
+        string $enclosure = '"'
+    ): array {
+        $parser = self::getParser(__FUNCTION__);
+        $params = [$header, $delimiter, $enclosure];
 
-        return self::parse($parser, $input, $isString, $returnObject, $params);
+        return self::parse($parser, $input, $isString, $params);
     }
 
     /**
@@ -95,13 +100,16 @@ class Parse
      *                             string, not a file holding the data.
      * @param bool   $returnObject Set true to return a \stdClass object.
      *
-     * @return array|\stdClass The parsed data.
+     * @return array The parsed data.
      */
-    public static function yaml($input, $isString = false, $returnObject = false)
-    {
-        $parser = self::getParseMethod(__FUNCTION__);
+    public static function yaml(
+        string $input,
+        bool $isString = false,
+        bool $returnObject = false
+    ): array {
+        $parser = self::getParser(__FUNCTION__);
 
-        return self::parse($parser, $input, $isString, $returnObject);
+        return self::parse($parser, $input, $isString);
     }
 
     /**
@@ -110,15 +118,16 @@ class Parse
      * @param string $input        The file or string of data to parse.
      * @param bool   $isString     Set true to indicate that the data is a
      *                             string, not a file holding the data.
-     * @param bool   $returnObject Set true to return a \stdClass object.
      *
-     * @return array|\stdClass The parsed data.
+     * @return array The parsed data.
      */
-    public static function json($input, $isString = false, $returnObject = false)
-    {
-        $parser = self::getParseMethod(__FUNCTION__);
+    public static function json(
+        string $input,
+        bool $isString = false
+    ): array {
+        $parser = self::getParser(__FUNCTION__);
 
-        return self::parse($parser, $input, $isString, $returnObject);
+        return self::parse($parser, $input, $isString);
     }
 
     /**
@@ -127,32 +136,16 @@ class Parse
      * @param string $input        The file or string of data to parse.
      * @param bool   $isString     Set true to indicate that the data is a
      *                             string, not a file holding the data.
-     * @param bool   $returnObject Set true to return a \stdClass object.
      *
-     * @return array|\stdClass The parsed data.
+     * @return array The parsed data.
      */
-    public static function ini($input, $isString = false, $returnObject = false)
-    {
-        $parser = self::getParseMethod(__FUNCTION__);
+    public static function ini(
+        string $input,
+        bool $isString = false
+    ): array {
+        $parser = self::getParser(__FUNCTION__);
 
-        return self::parse($parser, $input, $isString, $returnObject);
-    }
-
-    /**
-     * Converts an array to an object using stdClass.
-     *
-     * @param array $array The array to convert.
-     *
-     * @return \stdClass The object form of the array.
-     */
-    public static function arrayToObject(array $array)
-    {
-        $object = new \stdClass();
-        foreach ($array as $key => $value) {
-            $object->{$key} = $value;
-        }
-
-        return $object;
+        return self::parse($parser, $input, $isString);
     }
 
     /**
@@ -167,36 +160,16 @@ class Parse
      *                        open the file.
      *
      * @see \file_get_contents()
+     * 
+     * @codeCoverageIgnore
      */
-    public static function fileGetContents()
+    public static function fileGetContents(): string
     {
-        set_error_handler(__NAMESPACE__.'\Parse::errorException');
+        set_error_handler(ParseException::class . '::errorHandler');
         $contents = call_user_func_array('file_get_contents', func_get_args());
         restore_error_handler();
 
         return $contents;
-    }
-
-    /**
-     * Error handler that throws ErrorExceptions instead of warnings.
-     *
-     * @param int  $num  The error number.
-     * @param type $str  The error string.
-     * @param type $file The file the error occurred in.
-     * @param type $line The line of the file the error occured in.
-     *
-     * @return bool Returns false if the error was suppressed.
-     *
-     * @throws ParseException Errors are redirected through this exception.
-     */
-    public static function errorException($num, $str, $file, $line)
-    {
-        // error was suppressed with the @-operator
-        if (0 === error_reporting()) {
-            return false;
-        }
-
-        throw new ParseException($str, 0, $num, $file, $line);
     }
 
     /**
@@ -206,7 +179,7 @@ class Parse
      *
      * @return string The extension of the file.
      */
-    public static function getExt($filename)
+    public static function getExt(string $filename): string
     {
         return substr(strrchr($filename, '.'), 1);
     }
@@ -218,7 +191,7 @@ class Parse
      *
      * @return string The detected EOL.
      */
-    public static function detectEol($string)
+    public static function detectEol(string $string): string
     {
         $eols = array_count_values(str_split(preg_replace("/[^\r\n]/", '', $string)));
         $eola = array_keys($eols, max($eols));
@@ -231,43 +204,41 @@ class Parse
      * Calls the parser method with the contents of input and returns the data
      * in array (or optionally object) form.
      *
-     * @param string $parser       The fully qualified method to use.
-     * @param string $input        The file or string of data to parse.
-     * @param bool   $isString     Set true to indicate that the data is a
-     *                             string, not a file holding the data.
-     * @param bool   $returnObject Set true to return a \stdClass object.
-     * @param array  $params       Additional parameters to pass to the parser.
+     * @param ParserInterface $parser   The Parser to use.
+     * @param string          $input    The file or string of data to parse.
+     * @param bool            $isString Set true to indicate that the data is a
+     *                                  string, not a file holding the data.
+     * @param array           $params   Additional parameters to pass to the
+     *                                  parser.
      *
-     * @return array|\stdClass The parsed data.
+     * @return array The parsed data.
      */
-    protected static function parse($parser, $input, $isString = false,
-        $returnObject = false, $params = array()
-    ) {
+    private static function parse(
+        ParserInterface $parser,
+        string $input,
+        bool $isString = false, 
+        array $params = []
+    ): array {
         $contents = $isString ? $input : self::fileGetContents($input);
-        $allParams = array_merge(array($contents), $params);
-        $parsed = call_user_func_array($parser, $allParams);
-
-        return $returnObject ? self::arrayToObject($parsed) : $parsed;
+        $allParams = array_merge([$contents], $params);
+        
+        return $parser::parse(...$allParams);
     }
-
+    
     /**
-     * Returns the fully qualified name of the given parser.
+     * Returns a new instance of the desired parser.
      *
      * @param string $name The short name of the desired class.
-     *
-     * @return string|bool The class name or false if the class could not be
-     *                     found or does not implement ParserInterface.
+     * 
+     * @return ParserInterface Returns the desired Parser.
+     * 
+     * @throws ParseException if the parser cannot be loaded.
      */
-    protected static function getParseMethod($name)
+    private static function getParser($name)
     {
-        $ns = __NAMESPACE__.'\\Parser\\';
-        $cls = $ns.ucfirst(strtolower($name));
-        $mtd = $cls.'::parse';
-
-        $int = $ns.'ParserInterface';
-        $imp = class_implements($cls);
-
-        return (class_exists($cls) && $imp && isset($imp[$int])) ? $mtd : false;
+        $class = __NAMESPACE__ . '\\Parser\\' . ucfirst(strtolower($name));
+        
+        return new $class;
     }
 }
 

@@ -3,8 +3,8 @@
 /**
  * Yaml parser class.
  *
- * @author Adam Blake <adamblake@g.ucla.edu>
- * @copyright (C) 2016 Adam Blake <adamblake@g.ucla.edu>
+ * @author Adam Blake <theadamattack@gmail.com>
+ * @copyright (C) 2016 Adam Blake <theadamattack@gmail.com>
  * @license http://opensource.org/licenses/GPL-3.0 GNU Public License
  *
  * This program is free software; you can redistribute it and/or
@@ -25,13 +25,14 @@
 namespace adamblake\parse\Parser;
 
 use adamblake\parse\ParseException;
-use Symfony\Component\Yaml\Yaml;
+use Symfony\Component\Yaml\Yaml as SymfonyYaml;
+use \Symfony\Component\Yaml\Exception\ParseException as SymfonyYamlException;
 
 /**
  * Parses YAML strings to array.
  *
- * @author Adam Blake <adamblake@g.ucla.edu>
- * @copyright (C) 2016 Adam Blake <adamblake@g.ucla.edu>
+ * @author Adam Blake <theadamattack@gmail.com>
+ * @copyright (C) 2016 Adam Blake <theadamattack@gmail.com>
  * @license http://opensource.org/licenses/GPL-3.0 GNU Public License
  */
 class Yaml implements ParserInterface
@@ -43,21 +44,19 @@ class Yaml implements ParserInterface
      *
      * @return array The parsed data.
      *
-     * @throws adamblake\parse\ParseException Throws an exception if the string is invalid.
+     * @throws adamblake\parse\ParseException if the string is invalid YAML.
      */
-    public static function parse($string)
+    public static function parse(string $string): array
     {
-        $yaml = Yaml::parse(trim($string));
+        try {
+            $yaml = SymfonyYaml::parse(trim($string));
+        } catch (SymfonyYamlException $e) {
+            throw new ParseException($e);
+        }
+        
 
         if (null === $yaml) {
-            // empty file
             $yaml = [];
-        }
-
-        if (!is_array($yaml)) {
-            // not an array
-            throw new ParseException(sprintf('The input "%s" must '
-                .'contain or be a valid YAML structure.', $string));
         }
 
         return $yaml;

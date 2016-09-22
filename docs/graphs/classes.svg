@@ -19,64 +19,64 @@
 </g>
 <g id="clust3" class="cluster"><title>cluster_\adamblake\parse</title>
 <path fill="none" stroke="gray" d="M36,-60C36,-60 339.095,-60 339.095,-60 345.095,-60 351.095,-66 351.095,-72 351.095,-72 351.095,-418 351.095,-418 351.095,-424 345.095,-430 339.095,-430 339.095,-430 36,-430 36,-430 30,-430 24,-424 24,-418 24,-418 24,-72 24,-72 24,-66 30,-60 36,-60"/>
-<text text-anchor="middle" x="187.547" y="-417.2" font-family="Times New Roman,serif" font-size="11.00" fill="gray">Parse</text>
+<text text-anchor="middle" x="187.547" y="-417.2" font-family="Times New Roman,serif" font-size="11.00" fill="gray">parse</text>
 </g>
 <g id="clust4" class="cluster"><title>cluster_\adamblake\parse\Parser</title>
 <path fill="none" stroke="gray" d="M44,-168C44,-168 310.595,-168 310.595,-168 316.595,-168 322.595,-174 322.595,-180 322.595,-180 322.595,-390 322.595,-390 322.595,-396 316.595,-402 310.595,-402 310.595,-402 44,-402 44,-402 38,-402 32,-396 32,-390 32,-390 32,-180 32,-180 32,-174 38,-168 44,-168"/>
 <text text-anchor="middle" x="177.297" y="-389.2" font-family="Times New Roman,serif" font-size="11.00" fill="gray">Parser</text>
 </g>
-<!-- \\adamblake\\Parse\\Parser\\Json -->
-<g id="node1" class="node"><title>\\adamblake\\Parse\\Parser\\Json</title>
+<!-- \\adamblake\\parse\\Parser\\Json -->
+<g id="node1" class="node"><title>\\adamblake\\parse\\Parser\\Json</title>
 <polygon fill="none" stroke="black" points="314.595,-374 260.595,-374 260.595,-338 314.595,-338 314.595,-374"/>
 <text text-anchor="middle" x="287.595" y="-353.2" font-family="Courier,monospace" font-size="11.00">Json</text>
 </g>
-<!-- \\adamblake\\Parse\\Parser\\ParserInterface -->
-<g id="node5" class="node"><title>\\adamblake\\Parse\\Parser\\ParserInterface</title>
+<!-- \\adamblake\\parse\\Parser\\ParserInterface -->
+<g id="node5" class="node"><title>\\adamblake\\parse\\Parser\\ParserInterface</title>
 <polygon fill="none" stroke="black" points="158,-293 40,-293 40,-257 158,-257 158,-293"/>
 <text text-anchor="middle" x="99" y="-272.2" font-family="Courier,monospace" font-size="11.00">ParserInterface</text>
 </g>
-<!-- \\adamblake\\Parse\\Parser\\Json&#45;&gt;\\adamblake\\Parse\\Parser\\ParserInterface -->
-<g id="edge1" class="edge"><title>\\adamblake\\Parse\\Parser\\Json&#45;&gt;\\adamblake\\Parse\\Parser\\ParserInterface</title>
+<!-- \\adamblake\\parse\\Parser\\Json&#45;&gt;\\adamblake\\parse\\Parser\\ParserInterface -->
+<g id="edge1" class="edge"><title>\\adamblake\\parse\\Parser\\Json&#45;&gt;\\adamblake\\parse\\Parser\\ParserInterface</title>
 <path fill="none" stroke="black" stroke-dasharray="1,5" d="M260.256,-344.566C231.945,-332.277 186.248,-312.44 150.882,-297.088"/>
 <polygon fill="none" stroke="black" points="152.234,-293.859 141.668,-293.088 149.447,-300.28 152.234,-293.859"/>
 </g>
-<!-- \\adamblake\\Parse\\Parser\\Csv -->
-<g id="node2" class="node"><title>\\adamblake\\Parse\\Parser\\Csv</title>
+<!-- \\adamblake\\parse\\Parser\\Csv -->
+<g id="node2" class="node"><title>\\adamblake\\parse\\Parser\\Csv</title>
 <polygon fill="none" stroke="black" points="314.595,-320 260.595,-320 260.595,-284 314.595,-284 314.595,-320"/>
 <text text-anchor="middle" x="287.595" y="-299.2" font-family="Courier,monospace" font-size="11.00">Csv</text>
 </g>
-<!-- \\adamblake\\Parse\\Parser\\Csv&#45;&gt;\\adamblake\\Parse\\Parser\\ParserInterface -->
-<g id="edge2" class="edge"><title>\\adamblake\\Parse\\Parser\\Csv&#45;&gt;\\adamblake\\Parse\\Parser\\ParserInterface</title>
+<!-- \\adamblake\\parse\\Parser\\Csv&#45;&gt;\\adamblake\\parse\\Parser\\ParserInterface -->
+<g id="edge2" class="edge"><title>\\adamblake\\parse\\Parser\\Csv&#45;&gt;\\adamblake\\parse\\Parser\\ParserInterface</title>
 <path fill="none" stroke="black" stroke-dasharray="1,5" d="M260.256,-298.189C236.415,-294.739 200.246,-289.505 168.299,-284.883"/>
 <polygon fill="none" stroke="black" points="168.494,-281.375 158.096,-283.406 167.491,-288.302 168.494,-281.375"/>
 </g>
-<!-- \\adamblake\\Parse\\Parser\\Yaml -->
-<g id="node3" class="node"><title>\\adamblake\\Parse\\Parser\\Yaml</title>
+<!-- \\adamblake\\parse\\Parser\\Yaml -->
+<g id="node3" class="node"><title>\\adamblake\\parse\\Parser\\Yaml</title>
 <polygon fill="none" stroke="black" points="314.595,-266 260.595,-266 260.595,-230 314.595,-230 314.595,-266"/>
 <text text-anchor="middle" x="287.595" y="-245.2" font-family="Courier,monospace" font-size="11.00">Yaml</text>
 </g>
-<!-- \\adamblake\\Parse\\Parser\\Yaml&#45;&gt;\\adamblake\\Parse\\Parser\\ParserInterface -->
-<g id="edge4" class="edge"><title>\\adamblake\\Parse\\Parser\\Yaml&#45;&gt;\\adamblake\\Parse\\Parser\\ParserInterface</title>
+<!-- \\adamblake\\parse\\Parser\\Yaml&#45;&gt;\\adamblake\\parse\\Parser\\ParserInterface -->
+<g id="edge4" class="edge"><title>\\adamblake\\parse\\Parser\\Yaml&#45;&gt;\\adamblake\\parse\\Parser\\ParserInterface</title>
 <path fill="none" stroke="black" stroke-dasharray="1,5" d="M260.256,-251.811C236.415,-255.261 200.246,-260.495 168.299,-265.117"/>
 <polygon fill="none" stroke="black" points="167.491,-261.698 158.096,-266.594 168.494,-268.625 167.491,-261.698"/>
 </g>
-<!-- \\adamblake\\Parse\\Parser\\Ini -->
-<g id="node4" class="node"><title>\\adamblake\\Parse\\Parser\\Ini</title>
+<!-- \\adamblake\\parse\\Parser\\Ini -->
+<g id="node4" class="node"><title>\\adamblake\\parse\\Parser\\Ini</title>
 <polygon fill="none" stroke="black" points="314.595,-212 260.595,-212 260.595,-176 314.595,-176 314.595,-212"/>
 <text text-anchor="middle" x="287.595" y="-191.2" font-family="Courier,monospace" font-size="11.00">Ini</text>
 </g>
-<!-- \\adamblake\\Parse\\Parser\\Ini&#45;&gt;\\adamblake\\Parse\\Parser\\ParserInterface -->
-<g id="edge5" class="edge"><title>\\adamblake\\Parse\\Parser\\Ini&#45;&gt;\\adamblake\\Parse\\Parser\\ParserInterface</title>
+<!-- \\adamblake\\parse\\Parser\\Ini&#45;&gt;\\adamblake\\parse\\Parser\\ParserInterface -->
+<g id="edge5" class="edge"><title>\\adamblake\\parse\\Parser\\Ini&#45;&gt;\\adamblake\\parse\\Parser\\ParserInterface</title>
 <path fill="none" stroke="black" stroke-dasharray="1,5" d="M260.256,-205.434C231.945,-217.723 186.248,-237.56 150.882,-252.912"/>
 <polygon fill="none" stroke="black" points="149.447,-249.72 141.668,-256.912 152.234,-256.141 149.447,-249.72"/>
 </g>
-<!-- \\adamblake\\Parse\\Parse -->
-<g id="node6" class="node"><title>\\adamblake\\Parse\\Parse</title>
+<!-- \\adamblake\\parse\\Parse -->
+<g id="node6" class="node"><title>\\adamblake\\parse\\Parse</title>
 <polygon fill="none" stroke="black" points="314.595,-158 260.595,-158 260.595,-122 314.595,-122 314.595,-158"/>
 <text text-anchor="middle" x="287.595" y="-137.2" font-family="Courier,monospace" font-size="11.00">Parse</text>
 </g>
-<!-- \\adamblake\\Parse\\ParseException -->
-<g id="node7" class="node"><title>\\adamblake\\Parse\\ParseException</title>
+<!-- \\adamblake\\parse\\ParseException -->
+<g id="node7" class="node"><title>\\adamblake\\parse\\ParseException</title>
 <polygon fill="none" stroke="black" points="343.095,-104 232.095,-104 232.095,-68 343.095,-68 343.095,-104"/>
 <text text-anchor="middle" x="287.595" y="-83.2" font-family="Courier,monospace" font-size="11.00">ParseException</text>
 </g>
@@ -85,8 +85,8 @@
 <ellipse fill="none" stroke="black" cx="99" cy="-18" rx="61.1893" ry="18"/>
 <text text-anchor="middle" x="99" y="-14.3" font-family="Times New Roman,serif" font-size="14.00" fill="gray">rrorException</text>
 </g>
-<!-- \\adamblake\\Parse\\ParseException&#45;&gt;\\ErrorException -->
-<g id="edge3" class="edge"><title>\\adamblake\\Parse\\ParseException&#45;&gt;\\ErrorException</title>
+<!-- \\adamblake\\parse\\ParseException&#45;&gt;\\ErrorException -->
+<g id="edge3" class="edge"><title>\\adamblake\\parse\\ParseException&#45;&gt;\\ErrorException</title>
 <path fill="none" stroke="black" d="M237.081,-67.9558C209.483,-57.8985 175.275,-45.4323 147.936,-35.469"/>
 <polygon fill="none" stroke="black" points="148.793,-32.0563 138.199,-31.9207 146.396,-38.6332 148.793,-32.0563"/>
 </g>
