@@ -54,7 +54,7 @@ class Csv implements ParserInterface
         string $delim = ',',
         string $enc = '"'
     ): array {
-        $lines = explode("\n", self::encodeEnclosures($csv, $delim, $enc));
+        $lines = explode("\n", rtrim(self::encodeEnclosures($csv, $delim, $enc), "\n"));
         $parsed = $header ? self::parseLinesWithHeader($lines, $delim, $enc)
                           : self::parseLinesWithNoHeader($lines, $delim, $enc);
         
@@ -100,9 +100,9 @@ class Csv implements ParserInterface
     ): array {
         $header = self::parseEncodedLine(array_shift($lines), $delim, $enc);
         $headLen = count($header);
-        foreach ($lines as $i => &$line) {
+        foreach ($lines as $idx => &$line) {
             $data = self::parseEncodedLine($line, $delim, $enc);
-            self::checkForLongRow($data, $i + 2, $headLen);
+            self::checkForLongRow($data, $idx + 2, $headLen);
             $line = array_combine($header, array_pad($data, $headLen, ''));
         }
         

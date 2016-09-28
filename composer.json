@@ -10,7 +10,8 @@
   ],
   "require":{  
     "php":">=7.0.0",
-    "symfony/yaml":"^3.0"
+    "symfony/yaml":"^3.0",
+    "phpoffice/phpexcel": "dev-master"
   },
   "autoload":{  
     "psr-4":{  

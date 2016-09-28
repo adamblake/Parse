@@ -33,7 +33,7 @@ class ParseTest extends \PHPUnit_Framework_TestCase
      * The directory for the test data files.
      * @var string
      */
-    protected $files = __DIR__.'/files';
+    protected $files = __DIR__.'/test_files/';
 
     /**
      * Provides the filenames for files that should be parseable using the 
@@ -223,5 +223,59 @@ class ParseTest extends \PHPUnit_Framework_TestCase
     {
         $phpEOL = 'This is text.'.PHP_EOL.'This is text.'.PHP_EOL.'This is tex';
         $this->assertEquals(PHP_EOL, Parse::detectEol($phpEOL));
+    }
+    
+    /**
+     * @covers adamblake\parse\Parse::xlsx
+     */
+    public function testParseXlsxCanParseDataWithNoHeader()
+    {
+        $actual = Parse::xlsx($this->files.'/multipleRows.xlsx', false);
+        $this->assertEquals([[1, 2], [3, 4], [5, 6]], $actual);
+    }
+    
+    /**
+     * @covers adamblake\parse\Parse::xlsx
+     */
+    public function testParseXlsxCanParseDataWithHeader()
+    {
+        $actual = Parse::xlsx($this->files.'/multipleRows.xlsx');
+        $this->assertEquals([[1 => 3, 2 => 4], [1 => 5, 2 => 6]], $actual);
+    }
+    
+    /**
+     * @covers adamblake\parse\Parse::table
+     */
+    public function testParseTableAutomaticallyDeterminesCorrectParserXlsx()
+    {
+        $actual = Parse::table($this->files.'/multipleRows.xlsx', false);
+        $this->assertEquals([[1, 2], [3, 4], [5, 6]], $actual);
+    }
+    
+    /**
+     * @covers adamblake\parse\Parse::table
+     */
+    public function testParseTableAutomaticallyDeterminesCorrectParserCsv()
+    {
+        $actual = Parse::table($this->files.'/multipleRows.csv', false);
+        $this->assertEquals([[1, 2], [3, 4], [5, 6]], $actual);
+    }
+    
+    /**
+     * @covers adamblake\parse\Parse::table
+     */
+    public function testParseTableAutomaticallyDeterminesCorrectParserTsv()
+    {
+        $actual = Parse::table($this->files.'/multipleRows.tsv', false);
+        $this->assertEquals([[1, 2], [3, 4], [5, 6]], $actual);
+    }
+    
+    /**
+     * @covers adamblake\parse\Parse::table
+     */
+    public function testParseTableThrowsErrorForInvalidType()
+    {
+        $this->expectException(ParseException::class);
+        Parse::table($this->files.'/invalid.file', false);
     }
 }

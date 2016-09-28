@@ -21,9 +21,17 @@ abstract class ParserTestFramework extends \PHPUnit_Framework_TestCase
      */
     protected function setUp()
     {
+        $this->files = __DIR__ . '/test_files';
+
+        // load the class once so that debugger doesn't go through autoloader
         $class = __NAMESPACE__ . '\\' . ucfirst($this->getType());
         new $class;
     }
     
+    /**
+     * All Parser tests should provide the type of file they are testing---this
+     * makes it easier to pre-load the class and skip that part of the debug 
+     * step-through.
+     */
     abstract protected function getType(): string;
 }

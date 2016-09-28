@@ -172,4 +172,11 @@ class CsvTest extends ParserTestFramework
         $this->expectExceptionMessageRegExp('/line 3/');
         Csv::parse("a,b,c\nd,e,f\ng,h,i,j");
     }
+    
+    public function testCanHandleExcelGeneratedCsvFiles()
+    {
+        $contents = file_get_contents($this->files.'/multipleRows.excel.csv');
+        $actual = Csv::parse($contents, false);
+        $this->assertEquals([[1, 2], [3, 4], [5, 6]], $actual);
+    }
 }

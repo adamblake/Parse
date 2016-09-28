@@ -40,56 +40,43 @@ class Parse
      *
      * @param string $filename     The configuration file to parse.
      *
-     * @return array|\stdClass Associative array or class of the configurations.
+     * @return array Associative array of the configurations.
      *
      * @throws ParseException if the file type is unsupported.
      */
-    public static function config($filename): array
-    {
-        $ext = strtolower(self::getExt($filename));
-
-        if ('yml' === $ext || 'yaml' === $ext) {
-            $config = self::yaml($filename, false);
-        } elseif ('json' === $ext) {
-            $config = self::json($filename, false);
-        } elseif ('ini' === $ext) {
-            $config = self::ini($filename, false);
+    public static function config($filename)
+    : array {
+        switch (strtolower(self::getExt($filename))) {
+            case 'yml':
+            case 'yaml': return self::yaml($filename, false);
+            case 'json': return self::json($filename, false);
+            case 'ini':  return self::ini($filename, false);
+            default:     throw new ParseException('The given config file '
+                         . "'$filename' is invalid or of an unsupported file "
+                         . 'type (supported: YAML, JSON, INI.');
         }
-
-        if (!isset($config)) {
-            throw new ParseException('The given config file '
-                ."'$filename' is invalid or of an unsupported file type "
-                .'(supported: YAML, JSON, INI.');
-        }
-
-        return $config;
     }
-
+    
     /**
-     * Parses a CSV file or string.
-     * The first row will be interpreted as a header row and the values used
-     * as keys (column names) for the subsequent rows).
-     *
-     * @param string $input        The file or string of CSV data to parse.
-     * @param bool   $isString     Set TRUE to indicate that the data is a
-     *                             string, not a file holding the data.
-     * @param bool   $header       Set FALSE to parse data without a header.
-     * @param string $delimiter    The delimiter used to separate data fields.
-     * @param string $enclosure    The character used to enclose fields.
-     *
-     * @return array The parsed data.
+     * Parses a table and returns the array of data.
+     * 
+     * @param string $filename The table file to parse.
+     * @param bool   $header   Set FALSE to parse without header row.
+     * 
+     * @return array The array of data from the table.
+     * 
+     * @throws ParseException if the file type is unsupported.
      */
-    public static function csv(
-        string $input,
-        bool $isString = false,
-        bool $header = true,
-        string $delimiter = ',',
-        string $enclosure = '"'
-    ): array {
-        $parser = self::getParser(__FUNCTION__);
-        $params = [$header, $delimiter, $enclosure];
-
-        return self::parse($parser, $input, $isString, $params);
+    public static function table($filename, bool $header = true)
+    : array {
+        switch (strtolower(self::getExt($filename))) {
+            case 'csv':  return self::csv($filename, false, $header);
+            case 'tsv':  return self::csv($filename, false, $header, "\t");
+            case 'xlsx': return self::xlsx($filename, false, $header);
+            default:     throw new ParseException('The given config file '
+                         . "'$filename' is invalid or of an unsupported file "
+                         . 'type (supported: CSV, TSV, XLSX.');
+        }
     }
 
     /**
@@ -146,6 +133,51 @@ class Parse
         $parser = self::getParser(__FUNCTION__);
 
         return self::parse($parser, $input, $isString);
+    }
+    
+    /**
+     * Parses a CSV file or string.
+     * The first row will be interpreted as a header row and the values used
+     * as keys (column names) for the subsequent rows).
+     *
+     * @param string $input        The file or string of CSV data to parse.
+     * @param bool   $isString     Set TRUE to indicate that the data is a
+     *                             string, not a file holding the data.
+     * @param bool   $header       Set FALSE to parse data without a header.
+     * @param string $delimiter    The delimiter used to separate data fields.
+     * @param string $enclosure    The character used to enclose fields.
+     *
+     * @return array The parsed data.
+     */
+    public static function csv(
+        string $input,
+        bool $isString = false,
+        bool $header = true,
+        string $delimiter = ',',
+        string $enclosure = '"'
+    ): array {
+        $parser = self::getParser(__FUNCTION__);
+        $params = [$header, $delimiter, $enclosure];
+
+        return self::parse($parser, $input, $isString, $params);
+    }
+    
+    /**
+     * Parses an XLSX file.
+     * Unlike other parsers, this does not support a "string" input of the data,
+     * as it is impractical to try to parse that type of input (XLSX is a
+     * complicated format). Thus, there is no $isString parameter.
+     * 
+     * @param string $filename The file to parse.
+     * @param bool   $header   Set FALSE to parse data without a header.
+     * 
+     * @return array The parsed data.
+     */
+    public static function xlsx(string $filename, bool $header = true)
+    : array {
+        $parser = self::getParser(__FUNCTION__);
+        
+        return $parser::parse($filename, $header);
     }
 
     /**
