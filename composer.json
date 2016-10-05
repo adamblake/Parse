@@ -11,7 +11,7 @@
   "require":{  
     "php":">=7.0.0",
     "symfony/yaml":"^3.0",
-    "phpoffice/phpexcel": "dev-master"
+    "phpoffice/phpexcel": "^1.8"
   },
   "autoload":{  
     "psr-4":{  
