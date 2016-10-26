@@ -56,23 +56,27 @@ class Parse
                          . 'type (supported: YAML, JSON, INI.');
         }
     }
-    
+
     /**
      * Parses a table and returns the array of data.
-     * 
+     *
+     * Note 'TXT' files are treated as tab-delimited as this is the default
+     * Excel extension for tab-delimited data.
+     *
      * @param string $filename The table file to parse.
      * @param bool   $header   Set FALSE to parse without header row.
-     * 
+     *
      * @return array The array of data from the table.
-     * 
+     *
      * @throws ParseException if the file type is unsupported.
      */
     public static function table($filename, bool $header = true)
     : array {
         switch (strtolower(self::getExt($filename))) {
             case 'csv':  return self::csv($filename, false, $header);
-            case 'tsv':  return self::csv($filename, false, $header, "\t");
-            case 'xlsx': return self::xlsx($filename, false, $header);
+            case 'txt':  // default Excel extension for tsv
+            case 'tsv':  return self::tsv($filename, false, $header);
+            case 'xlsx': return self::xlsx($filename, $header);
             default:     throw new ParseException('The given config file '
                          . "'$filename' is invalid or of an unsupported file "
                          . 'type (supported: CSV, TSV, XLSX.');
@@ -134,7 +138,7 @@ class Parse
 
         return self::parse($parser, $input, $isString);
     }
-    
+
     /**
      * Parses a CSV file or string.
      * The first row will be interpreted as a header row and the values used
@@ -161,22 +165,46 @@ class Parse
 
         return self::parse($parser, $input, $isString, $params);
     }
-    
+
+    /**
+     * Shortcut wrapper function for tab-separated data. Operates as csv with
+     * delimiter set to tab.
+     *
+     * @param string $input        The file or string of TSV data to parse.
+     * @param bool   $isString     Set TRUE to indicate that the data is a
+     *                             string, not a file holding the data.
+     * @param bool   $header       Set FALSE to parse data without a header.
+     * @param string $enclosure    The character used to enclose fields.
+     *
+     * @return array The parsed data.
+     */
+    public static function tsv(
+        string $input,
+        bool $isString = false,
+        bool $header = true,
+        string $enclosure = '"'
+    ): array {
+        $parser = self::getParser('csv');
+        $params = [$header, "\t", $enclosure];
+
+        return self::parse($parser, $input, $isString, $params);
+    }
+
     /**
      * Parses an XLSX file.
      * Unlike other parsers, this does not support a "string" input of the data,
      * as it is impractical to try to parse that type of input (XLSX is a
      * complicated format). Thus, there is no $isString parameter.
-     * 
+     *
      * @param string $filename The file to parse.
      * @param bool   $header   Set FALSE to parse data without a header.
-     * 
+     *
      * @return array The parsed data.
      */
     public static function xlsx(string $filename, bool $header = true)
     : array {
         $parser = self::getParser(__FUNCTION__);
-        
+
         return $parser::parse($filename, $header);
     }
 
@@ -192,7 +220,7 @@ class Parse
      *                        open the file.
      *
      * @see \file_get_contents()
-     * 
+     *
      * @codeCoverageIgnore
      */
     public static function fileGetContents(): string
@@ -248,28 +276,28 @@ class Parse
     private static function parse(
         ParserInterface $parser,
         string $input,
-        bool $isString = false, 
+        bool $isString = false,
         array $params = []
     ): array {
         $contents = $isString ? $input : self::fileGetContents($input);
         $allParams = array_merge([$contents], $params);
-        
+
         return $parser::parse(...$allParams);
     }
-    
+
     /**
      * Returns a new instance of the desired parser.
      *
      * @param string $name The short name of the desired class.
-     * 
+     *
      * @return ParserInterface Returns the desired Parser.
-     * 
+     *
      * @throws ParseException if the parser cannot be loaded.
      */
     private static function getParser($name)
     {
         $class = __NAMESPACE__ . '\\Parser\\' . ucfirst(strtolower($name));
-        
+
         return new $class;
     }
 }
