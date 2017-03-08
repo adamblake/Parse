@@ -80,7 +80,7 @@ was using would throw exceptions and others would throw errors and I have a
 thing for consistency.
 
 # License
-Copyright (C) 2016 Adam Blake
+Copyright (C) 2016-2017 Adam Blake
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
