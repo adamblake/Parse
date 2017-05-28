@@ -8,11 +8,11 @@ class JsonTest extends ParserTestFramework
 {
     /**
      * {@inheritdoc}
-     * 
+     *
      * @return string The type of Parser.
      */
-    protected function getType()
-    : string {
+    protected function getType(): string
+    {
         return 'json';
     }
     

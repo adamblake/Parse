@@ -6,7 +6,7 @@ namespace adamblake\parse;
  * PHPUnit test class for Parse. Files utilized by this class can be found
  * in test/files.
  */
-class ParseTest extends \PHPUnit_Framework_TestCase
+class ParseTest extends \PHPUnit\Framework\TestCase
 {
     /**
      * The array of test data.
@@ -85,7 +85,8 @@ class ParseTest extends \PHPUnit_Framework_TestCase
      * @param string $delim The delimiter used in the file's data.
      */
     public function testCanParseCsvWithHeaderAndDifferentDelimiters(
-        string $file, string $delim
+        string $file,
+        string $delim
     ) {
         $data = [
             ['id' => '0', 'name' => 'Adam', 'sentence' => 'has, a comma'],
@@ -270,8 +271,8 @@ class ParseTest extends \PHPUnit_Framework_TestCase
      *
      * @return array Returns the valid parseable files.
      */
-    public function validConfigFilesProvider()
-    : array {
+    public function validConfigFilesProvider(): array
+    {
         return [
             'yaml' => [$this->files.'/v.yaml'],
             'yml'  => [$this->files.'/v.yml'],
@@ -286,8 +287,8 @@ class ParseTest extends \PHPUnit_Framework_TestCase
      *
      * @return array Returns the valid parseable files.
      */
-    public function validTableFilesProvider()
-    : array {
+    public function validTableFilesProvider(): array
+    {
         return [
             'csv' => [$this->files.'/multipleRows.csv'],
             'tsv'  => [$this->files.'/multipleRows.tsv'],
@@ -302,8 +303,8 @@ class ParseTest extends \PHPUnit_Framework_TestCase
      *
      * @return array Returns the array of filenames and delimiters.
      */
-    public function validCsvFilesProvider()
-    : array {
+    public function validCsvFilesProvider(): array
+    {
         return [
             ','  => [$this->files.'/v.csv', ','],
             ';'  => [$this->files.'/semi.csv', ';'],

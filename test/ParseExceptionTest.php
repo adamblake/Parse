@@ -8,12 +8,12 @@ namespace adamblake\parse;
 
 /**
  * Tests the behavior of the ParseException class.
- * 
+ *
  * @author Adam Blake <theadamattack@gmail.com>
  * @copyright (c) 2016, Adam Blake <theadamattack@gmail.com>
  * @license https://opensource.org/licenses/GPL-3.0 GNU Public License (GPL-3.0)
  */
-class ParseExceptionTest extends \PHPUnit_Framework_TestCase
+class ParseExceptionTest extends \PHPUnit\Framework\TestCase
 {
     /**
      * @covers adamblake\parse\ParseException::__construct
