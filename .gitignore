@@ -27,7 +27,7 @@ composer.phar
 docs/
 test/reports/
 
-### NetBeans ###
+### IDEs ###
 nbproject/
 nbproject/private/
 build/
@@ -36,4 +36,5 @@ dist/
 nbdist/
 nbactions.xml
 .nb-gradle/
+.idea/
 
