@@ -141,6 +141,8 @@ class Csv implements ParserInterface
      * @param string $enc   The character used to enclose fields.
      * 
      * @return string The CSV data with enclosures removed and markers inserted.
+     *
+     * @throws ParseException if there is a PCRE PREG error.
      * 
      * @see decodeMarkers, parseEncodedCsvLine
      */
@@ -153,11 +155,18 @@ class Csv implements ParserInterface
         // Pattern for matching enclosed data: (?:"((?:""|[^"])*)")*
         $pattern = '/([^"]*)(?:"((?:""|[^"])*)")*/s';
         if ($enc !== '"') { $pattern = str_replace('"', $enc, $pattern); }
-        
-        return preg_replace_callback($pattern, function ($m) use ($delim, $enc) {
+
+        $encoded = preg_replace_callback($pattern, function ($m) use ($delim, $enc) {
             $enclosed = isset($m[2]) ? self::encodeMarkers($m[2], $delim, $enc) : '';
             return self::convertToUnixLineEndings($m[1]) . $enclosed;
         }, $csv);
+
+        if (null === $encoded) {
+            $errorMessage = array_flip(get_defined_constants(true)['pcre'])[preg_last_error()];
+            throw new ParseException($errorMessage);
+        }
+
+        return $encoded;
     }
     
     /**
