@@ -10,7 +10,7 @@
   ],
   "require":{  
     "php":">=7.0.0",
-    "symfony/yaml":"^3.0",
+    "symfony/yaml":"^4.0",
     "phpoffice/phpspreadsheet": "^1.2"
   },
   "autoload":{  
