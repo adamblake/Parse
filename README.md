@@ -1,6 +1,6 @@
 # Parse
 Simple one-off PHP class for parsing files and converting them to arrays.
-Currently supports CSV, JSON, YAML (using symfony/yaml), and INI files and 
+Currently supports CSV, JSON, YAML (using symfony/yaml), XLSX (using phpoffice/phpspreadsheet), and INI files and 
 strings. All supported types can either be read from file or from an 
 appropriately formed string. All errors thrown during reading and parsing of 
 files are converted to ParseExceptions and thus will not halt the flow of the 
@@ -36,11 +36,12 @@ use adamblake\parse;
 $data = Parse::config('path/to/file');
 $data['setting'] = 'value';
 
-// parse from file as JSON, YAML, INI, CSV
+// parse from file as JSON, YAML, INI, CSV, XLSX
 $data = Parse::json('path/to/file');
 $data = Parse::yaml('path/to/file');
 $data = Parse::ini('path/to/file');
 $data = Parse::csv('path/to/file');
+$data = Parse::xlsx('path/to/file');
 
 // automatically determine which parser to use for config files (YAML, JSON, INI)
 $data = Parse::config('path/to/file.yaml');
@@ -67,7 +68,7 @@ was using would throw exceptions and others would throw errors and I have a
 thing for consistency.
 
 # License
-Copyright (C) 2016-2017 Adam Blake
+Copyright (C) 2016-2018 Adam Blake
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
