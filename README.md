@@ -24,21 +24,8 @@ will be parsed as
 ```
 
 # Installing
-This class is not on Packagist. Either download the zip and the symfony/yaml 
-dependency and configure them manually, or use it with composer by adding the 
-following to your composer.json:
-```json
-{
-  "repositories": [
-    {
-      "type": "git",
-      "url": "https://github.com/adamblake/Parse"
-    }
-  ],
-  "require": {
-    "adamblake/Parse": "dev-master"
-  }
-}
+```
+> composer require adamblake/parse
 ```
 
 # Usage
