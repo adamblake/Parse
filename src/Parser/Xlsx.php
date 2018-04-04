@@ -25,6 +25,9 @@
 namespace adamblake\parse\Parser;
 
 use adamblake\parse\ParseException;
+use PhpOffice\PhpSpreadsheet\IOFactory;
+use PhpOffice\PhpSpreadsheet\Spreadsheet;
+use PhpOffice\PhpSpreadsheet\Worksheet\Worksheet;
 
 /**
  * Parses XLSX sheets to array.
@@ -45,12 +48,17 @@ class Xlsx implements ParserInterface
      * @param bool   $header   Set FALSE to parse data without a header.
      *
      * @return array The two-dimensional array of data.
-     * @throws ParseException if the file cannot be parsed.
+     * @throws ParseException if the sheet cannot be parsed.
      */
     public static function parse(string $filename, $header = true): array
     {
-        $sheet = self::readFile($filename)->getActiveSheet();
-        $data = self::readSheet($sheet);
+        try {
+            $sheet = self::readFile($filename)->getActiveSheet();
+            $data = self::readSheet($sheet);
+        } catch (\Exception $e) {
+            throw new ParseException($e->getMessage());
+        }
+
         if ($header && !empty($data)) {
             $data = self::processHeaderKeys($data);
         }
@@ -63,15 +71,13 @@ class Xlsx implements ParserInterface
      * 
      * @param string $filename The file to parse.
      * 
-     * @return \PHPExcel Returns the PHPExcel object for the file.
-     * 
+     * @return Spreadsheet Returns the PHPExcel object for the file.
      * @throws ParseException when the reader encounters an error.
      */
-    private static function readFile(string $filename): \PHPExcel
+    private static function readFile(string $filename): Spreadsheet
     {
         try {
-            $reader = new \PHPExcel_Reader_Excel2007();
-            $reader->setReadDataOnly(true);
+            $reader = IOFactory::createReader("Xlsx");
             $xlsx = $reader->load($filename);
         } catch (\Exception $e) {
             throw new ParseException($e->getMessage());
@@ -79,15 +85,16 @@ class Xlsx implements ParserInterface
         
         return $xlsx;
     }
-    
+
     /**
      * Reads a PHPExcel_Worksheet in as an array of row arrays.
-     * 
-     * @param \PHPExcel_Worksheet $sheet The sheet to read.
-     * 
+     *
+     * @param Worksheet $sheet The sheet to read.
+     *
      * @return array Returns the array of data from the sheet.
+     * @throws \PhpOffice\PhpSpreadsheet\Exception
      */
-    private static function readSheet(\PHPExcel_Worksheet $sheet): array
+    private static function readSheet(Worksheet $sheet): array
     {
         if (self::sheetIsEmpty($sheet)) {
             return [];
@@ -102,29 +109,31 @@ class Xlsx implements ParserInterface
         
         return $data;
     }
-    
+
     /**
      * Checks to see if the sheet is empty.
-     * 
-     * @param \PHPExcel_Worksheet $sheet The PHPExcel sheet to check.
-     * 
+     *
+     * @param Worksheet $sheet The PHPExcel sheet to check.
+     *
      * @return bool Returns TRUE if the sheet is empty, else FALSE.
+     * @throws \PhpOffice\PhpSpreadsheet\Exception
      */
-    private static function sheetIsEmpty(\PHPExcel_Worksheet $sheet): bool
+    private static function sheetIsEmpty(Worksheet $sheet): bool
     {
         return $sheet->getHighestDataRow() === 1
             && $sheet->getHighestDataColumn() === 'A'
             && $sheet->getCell('A1')->getValue() === null;
     }
-    
+
     /**
      * Converts a two-dimensional array of indexed arrays to an array of
      * associative arrays, where the first row is used for the keys of the
      * subsequent rows.
-     * 
+     *
      * @param array $data The data to process.
-     * 
+     *
      * @return array The data with the first row used as keys for the others.
+     * @throws ParseException if a data row has more fields than the header.
      */
     private static function processHeaderKeys(array $data): array
     {
