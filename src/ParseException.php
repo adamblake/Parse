@@ -54,7 +54,7 @@ class ParseException extends \ErrorException
         \Exception $prev = null
     ) {
         if (!$message) {
-            throw new $this('Unknown '.get_class($this));
+            throw new ParseException('Unknown '.get_class($this));
         }
 
         parent::__construct($message, $code, $severity, $filename, $line, $prev);

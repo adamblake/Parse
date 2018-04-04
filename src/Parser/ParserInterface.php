@@ -41,6 +41,8 @@ interface ParserInterface
      * for each row.
      *
      * @param string $string The string of data to parse.
+     *
+     * @return array The parsed data.
      */
     public static function parse(string $string): array;
 }

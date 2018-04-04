@@ -41,7 +41,6 @@ class Ini implements ParserInterface
      * @param string $string The string of data to parse.
      *
      * @return array The parsed data.
-     *
      * @throws ParseException if the string is invalid INI.
      */
     public static function parse(string $string): array
@@ -56,14 +55,12 @@ class Ini implements ParserInterface
      * Wrapper for parse_ini_string that throws ParseExceptions rather than
      * returning false and throwing a warning.
      *
-     * @return string The parsed INI string.
-     *
-     * @throws ParseException Throws an exception when parse_ini_string cannot
-     *                        open the file.
+     * @return array The parsed INI string.
+     * @throws ParseException if the string is invalid INI.
      *
      * @see \parse_ini_string()
      */
-    public static function parseIniString()
+    public static function parseIniString(): array
     {
         set_error_handler(ParseException::class . '::errorHandler');
         $ini = call_user_func_array('parse_ini_string', func_get_args());
@@ -76,9 +73,11 @@ class Ini implements ParserInterface
      * Unpacks nested INI sections/arrays.
      *
      * @param array $ini The INI array with keys to unpack.
+     *
+     * @return array The unpacked array of data.
      */
-    private static function unpackNestedKeys(array $ini)
-    : array {
+    private static function unpackNestedKeys(array $ini): array
+    {
         foreach ($ini as $key => $value) {
             if (strpos($key, '.') !== false) {
                 $ini = array_merge_recursive($ini, self::nest($key, $value));
@@ -102,8 +101,8 @@ class Ini implements ParserInterface
      * 
      * @return array The nested array with the value stored at the deepest key.
      */
-    private static function nest(string $dotString, $value)
-    : array {
+    private static function nest(string $dotString, $value): array
+    {
         $keys = explode('.', $dotString);
         $nest = [array_pop($keys) => $value];
         foreach (array_reverse($keys) as $key) {

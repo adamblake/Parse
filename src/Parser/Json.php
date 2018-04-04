@@ -41,7 +41,6 @@ class Json implements ParserInterface
      * @param string $string The string of data to parse.
      *
      * @return array The parsed data.
-     *
      * @throws ParseException if the string is invalid JSON.
      */
     public static function parse(string $string): array
@@ -51,15 +50,11 @@ class Json implements ParserInterface
             $error = json_last_error();
         }
 
-        if (!isset($json)) {
-            $json = [];
-        }
-
         if (isset($error) && $error !== JSON_ERROR_NONE) {
             throw new ParseException(sprintf("Failed to parse JSON string '%s',"
                 . " error: '%s'", $string, json_last_error_msg()));
         }
 
-        return $json;
+        return $json ?? [];
     }
 }

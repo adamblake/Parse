@@ -2,11 +2,13 @@
 
 namespace adamblake\parse;
 
+use PHPUnit\Framework\TestCase;
+
 /**
  * PHPUnit test class for Parse. Files utilized by this class can be found
  * in test/files.
  */
-class ParseTest extends \PHPUnit\Framework\TestCase
+class ParseTest extends TestCase
 {
     /**
      * The array of test data.

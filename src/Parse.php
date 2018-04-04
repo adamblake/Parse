@@ -41,7 +41,6 @@ class Parse
      * @param string $filename     The configuration file to parse.
      *
      * @return array Associative array of the configurations.
-     *
      * @throws ParseException if the file type is unsupported.
      */
     public static function config($filename)
@@ -67,11 +66,10 @@ class Parse
      * @param bool   $header   Set FALSE to parse without header row.
      *
      * @return array The array of data from the table.
-     *
      * @throws ParseException if the file type is unsupported.
      */
-    public static function table($filename, bool $header = true)
-    : array {
+    public static function table($filename, bool $header = true): array
+    {
         switch (strtolower(self::getExt($filename))) {
             case 'csv':  return self::csv($filename, false, $header);
             case 'txt':  // default Excel extension for tsv
@@ -92,12 +90,10 @@ class Parse
      * @param bool   $returnObject Set true to return a \stdClass object.
      *
      * @return array The parsed data.
+     * @throws ParseException if the file or string cannot be parsed.
      */
-    public static function yaml(
-        string $input,
-        bool $isString = false,
-        bool $returnObject = false
-    ): array {
+    public static function yaml(string $input, bool $isString = false, bool $returnObject = false): array
+    {
         $parser = self::getParser(__FUNCTION__);
 
         return self::parse($parser, $input, $isString);
@@ -111,11 +107,10 @@ class Parse
      *                             string, not a file holding the data.
      *
      * @return array The parsed data.
+     * @throws ParseException if the file or string cannot be parsed.
      */
-    public static function json(
-        string $input,
-        bool $isString = false
-    ): array {
+    public static function json(string $input, bool $isString = false): array
+    {
         $parser = self::getParser(__FUNCTION__);
 
         return self::parse($parser, $input, $isString);
@@ -129,6 +124,7 @@ class Parse
      *                             string, not a file holding the data.
      *
      * @return array The parsed data.
+     * @throws ParseException if the file or string cannot be parsed.
      */
     public static function ini(
         string $input,
@@ -152,6 +148,7 @@ class Parse
      * @param string $enclosure    The character used to enclose fields.
      *
      * @return array The parsed data.
+     * @throws ParseException if the file or string cannot be parsed.
      */
     public static function csv(
         string $input,
@@ -177,6 +174,7 @@ class Parse
      * @param string $enclosure    The character used to enclose fields.
      *
      * @return array The parsed data.
+     * @throws ParseException if the file or string cannot be parsed.
      */
     public static function tsv(
         string $input,
@@ -200,6 +198,7 @@ class Parse
      * @param bool   $header   Set FALSE to parse data without a header.
      *
      * @return array The parsed data.
+     * @throws ParseException if the file cannot be parsed.
      */
     public static function xlsx(string $filename, bool $header = true)
     : array {
@@ -215,9 +214,7 @@ class Parse
      * but all given arguments are passed to file_get_contents.
      *
      * @return string The read data.
-     *
-     * @throws ParseException Throws an exception when file_get_contents cannot
-     *                        open the file.
+     * @throws ParseException if the file cannot be read.
      *
      * @see \file_get_contents()
      *
@@ -272,6 +269,7 @@ class Parse
      *                                  parser.
      *
      * @return array The parsed data.
+     * @throws ParseException if the file or string cannot be parsed.
      */
     private static function parse(
         ParserInterface $parser,
@@ -288,13 +286,13 @@ class Parse
     /**
      * Returns a new instance of the desired parser.
      *
+     * If the class cannot be loaded, a ParseException may be thrown.
+     *
      * @param string $name The short name of the desired class.
      *
      * @return ParserInterface Returns the desired Parser.
-     *
-     * @throws ParseException if the parser cannot be loaded.
      */
-    private static function getParser($name)
+    private static function getParser($name): ParserInterface
     {
         $class = __NAMESPACE__ . '\\Parser\\' . ucfirst(strtolower($name));
 

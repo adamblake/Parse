@@ -43,8 +43,7 @@ class Yaml implements ParserInterface
      * @param string $string The string of data to parse.
      *
      * @return array The parsed data.
-     *
-     * @throws adamblake\parse\ParseException if the string is invalid YAML.
+     * @throws ParseException if the string is invalid YAML.
      */
     public static function parse(string $string): array
     {
@@ -53,12 +52,7 @@ class Yaml implements ParserInterface
         } catch (SymfonyYamlException $e) {
             throw new ParseException($e);
         }
-        
 
-        if (null === $yaml) {
-            $yaml = [];
-        }
-
-        return $yaml;
+        return $yaml ?? [];
     }
 }

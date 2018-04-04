@@ -6,6 +6,8 @@
 
 namespace adamblake\parse\Parser;
 
+use PHPUnit\Framework\TestCase;
+
 /**
  * Tests the behavior of the ParserTestFramework class.
  *
@@ -13,8 +15,11 @@ namespace adamblake\parse\Parser;
  * @copyright (c) 2016, Adam Blake <theadamattack@gmail.com>
  * @license https://opensource.org/licenses/GPL-3.0 GNU Public License (GPL-3.0)
  */
-abstract class ParserTestFramework extends \PHPUnit\Framework\TestCase
+abstract class ParserTestFramework extends TestCase
 {
+    /** @var string */
+    protected $files;
+
     /**
      * Sets up the fixture, for example, opens a network connection.
      * This method is called before a test is executed.

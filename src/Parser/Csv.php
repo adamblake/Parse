@@ -47,6 +47,7 @@ class Csv implements ParserInterface
      * @param string $enc    The character used to enclose fields.
      * 
      * @return array The two-dimensional array of data.
+     * @throws ParseException if the file or string cannot be parsed.
      */
     public static function parse(
         string $csv,
@@ -92,6 +93,7 @@ class Csv implements ParserInterface
      * @param string $enc    The character used to enclose fields.
      * 
      * @return array The two-dimensional array of data.
+     * @throws ParseException if the strings cannot be parsed.
      */
     private static function parseLinesWithHeader(
         array $lines,
@@ -141,7 +143,6 @@ class Csv implements ParserInterface
      * @param string $enc   The character used to enclose fields.
      * 
      * @return string The CSV data with enclosures removed and markers inserted.
-     *
      * @throws ParseException if there is a PCRE PREG error.
      * 
      * @see decodeMarkers, parseEncodedCsvLine
@@ -179,8 +180,7 @@ class Csv implements ParserInterface
      * 
      * @return string Returns the string with CSV special characters encoded.
      */
-    private static function encodeMarkers(string $enclosure, string $delim, string $enc)
-    : string {
+    private static function encodeMarkers(string $enclosure, string $delim, string $enc): string {
         $characters = [$delim, $enc.$enc, "\n", "\r"];
         $markers = ['!!D!!', '!!E!!', '!!N!!', '!!R!!'];
         
@@ -194,8 +194,7 @@ class Csv implements ParserInterface
      * 
      * @return string Returns the string with only Unix-style line endings.
      */
-    private static function convertToUnixLineEndings(string $string)
-    : string {
+    private static function convertToUnixLineEndings(string $string): string {
         return str_replace(["\r\n", "\r"], ["\n", "\n"], $string);
     }
     
@@ -215,7 +214,7 @@ class Csv implements ParserInterface
         string $delim,
         string $enc
     ): array {
-        $fields = explode($delim, $line); 
+        $fields = explode($delim, $line);
         foreach ($fields as &$field) {
             $field = self::decodeMarkers($field, $delim, $enc);
         }

@@ -37,17 +37,18 @@ class Xlsx implements ParserInterface
 {
     /**
      * {@inheritdoc}
-     * 
+     *
      * Parses an XLSX file into a two-dimensional array where each row of the
      * XLSX data is an indexed array within the output array.
-     * 
+     *
      * @param string $filename The file to parse.
      * @param bool   $header   Set FALSE to parse data without a header.
-     * 
+     *
      * @return array The two-dimensional array of data.
+     * @throws ParseException if the file cannot be parsed.
      */
-    public static function parse(string $filename, $header = true)
-    : array {
+    public static function parse(string $filename, $header = true): array
+    {
         $sheet = self::readFile($filename)->getActiveSheet();
         $data = self::readSheet($sheet);
         if ($header && !empty($data)) {
@@ -66,8 +67,8 @@ class Xlsx implements ParserInterface
      * 
      * @throws ParseException when the reader encounters an error.
      */
-    private static function readFile(string $filename)
-    : \PHPExcel {
+    private static function readFile(string $filename): \PHPExcel
+    {
         try {
             $reader = new \PHPExcel_Reader_Excel2007();
             $reader->setReadDataOnly(true);
@@ -86,8 +87,8 @@ class Xlsx implements ParserInterface
      * 
      * @return array Returns the array of data from the sheet.
      */
-    private static function readSheet(\PHPExcel_Worksheet $sheet)
-    : array {
+    private static function readSheet(\PHPExcel_Worksheet $sheet): array
+    {
         if (self::sheetIsEmpty($sheet)) {
             return [];
         }
@@ -109,8 +110,8 @@ class Xlsx implements ParserInterface
      * 
      * @return bool Returns TRUE if the sheet is empty, else FALSE.
      */
-    private static function sheetIsEmpty(\PHPExcel_Worksheet $sheet)
-    : bool {
+    private static function sheetIsEmpty(\PHPExcel_Worksheet $sheet): bool
+    {
         return $sheet->getHighestDataRow() === 1
             && $sheet->getHighestDataColumn() === 'A'
             && $sheet->getCell('A1')->getValue() === null;
@@ -125,8 +126,8 @@ class Xlsx implements ParserInterface
      * 
      * @return array The data with the first row used as keys for the others.
      */
-    private static function processHeaderKeys(array $data)
-    : array {
+    private static function processHeaderKeys(array $data): array
+    {
         $header = array_filter(array_shift($data));
         $headLen = count($header);
         foreach ($data as $idx => &$row) {
