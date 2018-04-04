@@ -25,7 +25,7 @@ will be parsed as
 
 # Installing
 ```
-> composer require adamblake/parse
+composer require adamblake/parse
 ```
 
 # Usage
