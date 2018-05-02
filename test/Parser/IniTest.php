@@ -27,24 +27,6 @@ class IniTest extends ParserTestFramework
     }
     
     /**
-     * @covers adamblake\parse\Parser\Ini::parseIniString
-     */
-    public function testParseIniStringReturnsSameInputAsWrappedFunction()
-    {
-        $test = 'key=value';
-        $this->assertEquals(parse_ini_string($test), Ini::parseIniString($test));
-    }
-    
-    /**
-     * @covers adamblake\parse\Parser\Ini::parseIniString
-     */
-    public function testParseIniStringInvalidThrowsExceptionNotError()
-    {
-        $this->expectException(ParseException::class);
-        Ini::parseIniString('[');
-    }
-    
-    /**
      * @covers adamblake\parse\Parser\Ini::parse
      */
     public function testParseIniStringWithMultipleKeys()

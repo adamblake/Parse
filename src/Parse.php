@@ -200,33 +200,10 @@ class Parse
      * @return array The parsed data.
      * @throws ParseException if the file cannot be parsed.
      */
-    public static function xlsx(string $filename, bool $header = true)
-    : array {
+    public static function xlsx(string $filename, bool $header = true): array {
         $parser = self::getParser(__FUNCTION__);
 
         return $parser::parse($filename, $header);
-    }
-
-    /**
-     * Wrapper for file_get_contents that throws Exceptions, rather than
-     * returning false and throwing a warning.
-     * Note: only the filename parameter is used in this wrapper's signature,
-     * but all given arguments are passed to file_get_contents.
-     *
-     * @return string The read data.
-     * @throws ParseException if the file cannot be read.
-     *
-     * @see \file_get_contents()
-     *
-     * @codeCoverageIgnore
-     */
-    public static function fileGetContents(): string
-    {
-        set_error_handler(ParseException::class . '::errorHandler');
-        $contents = call_user_func_array('file_get_contents', func_get_args());
-        restore_error_handler();
-
-        return $contents;
     }
 
     /**
@@ -277,7 +254,11 @@ class Parse
         bool $isString = false,
         array $params = []
     ): array {
-        $contents = $isString ? $input : self::fileGetContents($input);
+        $contents = $isString ? $input : file_get_contents($input);
+        if (false === $contents) {
+            throw new ParseException(sprintf('The file "%s" could not be read.', $input));
+        }
+
         $allParams = array_merge([$contents], $params);
 
         return $parser::parse(...$allParams);

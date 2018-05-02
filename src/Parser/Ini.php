@@ -45,28 +45,13 @@ class Ini implements ParserInterface
      */
     public static function parse(string $string): array
     {
-        $ini = self::parseIniString(trim($string), true) ?? [];
+        $ini = parse_ini_string(trim($string), true);
+        if (false === $ini) {
+            throw new ParseException(sprintf('INI string could not be parsed: %s', $string));
+        }
         $unpacked = self::unpackNestedKeys($ini);
 
         return $unpacked;
-    }
-
-    /**
-     * Wrapper for parse_ini_string that throws ParseExceptions rather than
-     * returning false and throwing a warning.
-     *
-     * @return array The parsed INI string.
-     * @throws ParseException if the string is invalid INI.
-     *
-     * @see \parse_ini_string()
-     */
-    public static function parseIniString(): array
-    {
-        set_error_handler(ParseException::class . '::errorHandler');
-        $ini = call_user_func_array('parse_ini_string', func_get_args());
-        restore_error_handler();
-
-        return $ini;
     }
 
     /**

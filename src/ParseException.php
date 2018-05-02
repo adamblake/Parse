@@ -59,24 +59,4 @@ class ParseException extends \ErrorException
 
         parent::__construct($message, $code, $severity, $filename, $line, $prev);
     }
-    
-    /**
-     * Error handler that throws ErrorExceptions instead of warnings.
-     *
-     * @param int    $num  The error number.
-     * @param string $str  The error string.
-     * @param string $file The file the error occurred in.
-     * @param int    $line The line of the file the error occurred in.
-     *
-     * @return bool Returns false if the error was suppressed.
-     *
-     * @throws ParseException Errors are redirected through this exception.
-     */
-    public static function errorHandler(int $num, string $str, string $file, int $line)
-    {
-        // error was suppressed with the @-operator
-        // if (0 === error_reporting()) { return false; }
-
-        throw new ParseException($str, 0, $num, $file, $line);
-    }
 }

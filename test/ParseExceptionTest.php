@@ -34,14 +34,4 @@ class ParseExceptionTest extends \PHPUnit\Framework\TestCase
         $this->expectExceptionCode(2);
         throw new ParseException('message', 2);
     }
-    
-    /**
-     * @covers adamblake\parse\ParseException::errorHandler
-     */
-    public function testErrorHandlerFunctionThrowsParseExceptions()
-    {
-        $this->expectException(ParseException::class);
-        $this->expectExceptionMessage('e');
-        ParseException::errorHandler(0, 'e', __FILE__, __LINE__);
-    }
 }

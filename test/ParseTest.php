@@ -145,28 +145,6 @@ class ParseTest extends TestCase
     }
 
     /**
-     * @covers adamblake\parse\Parse::fileGetContents
-     *
-     * @dataProvider validConfigFilesProvider
-     *
-     * @param string $file The valid file to get the contents of.
-     */
-    public function testFileGetContentsWrapperReturnsCorrectOutput($file)
-    {
-        $expected = file_get_contents($file);
-        $this->assertEquals($expected, Parse::fileGetContents($file));
-    }
-
-    /**
-     * @covers adamblake\parse\Parse::fileGetContents
-     */
-    public function testFileGetContentsWrapperThrowsExceptionsNotErrors()
-    {
-        $this->expectException(ParseException::class);
-        Parse::fileGetContents($this->files.'/dne.dne');
-    }
-
-    /**
      * @covers adamblake\parse\Parse::getExt
      */
     public function testGetExtReturnsFileExtension()
