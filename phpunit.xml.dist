@@ -16,7 +16,7 @@
       <directory>./test/Parser</directory>
     </testsuite>
     <testsuite name="Application Test Suite">
-      <file>./test/ParseTest.php</file>
+      <directory>./test</directory>
     </testsuite>
   </testsuites>
 </phpunit>
