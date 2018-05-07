@@ -246,6 +246,35 @@ class ParseTest extends TestCase
     }
 
     /**
+     * @covers adamblake\parse\Parse::parse
+     * @dataProvider validTableFilesProvider
+     * @param string $filename The filename of the file to parse.
+     */
+    public function testParseMagicParseTables($filename)
+    {
+    	$actual = Parse::parse($filename, true);
+        $this->assertEquals([[1 => 3, 2 => 4], [1 => 5, 2 => 6]], $actual);
+    }
+
+    /**
+     * @covers adamblake\parse\Parse::parse
+     * @dataProvider validConfigFilesProvider
+     * @param string $filename The filename of the file to parse.
+     */
+    public function testParseMagicParseConfig($filename)
+    {
+    	$actual = Parse::parse($filename, true);
+        $this->assertEquals($this->data, $actual);
+    }
+
+
+    public function testParseUnsupported()
+    {
+    	$this->expectException(ParseException::class);
+    	Parse::parse('unsupported.unsupportedExtension');
+    }
+
+    /**
      * Provides the filenames for files that should be parseable using the
      * Parse::config() method.
      *

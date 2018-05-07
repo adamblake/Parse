@@ -35,6 +35,22 @@ use adamblake\parse\Parser\ParserInterface;
  */
 class Parse
 {
+    public static function parse(string $filename): array
+    {
+        $extension = self::getExt($filename);
+        if (in_array($extension, ['yml', 'yaml', 'json', 'ini'])) {
+            return self::config($filename);
+        }
+
+        if (in_array($extension, ['csv', 'txt', 'tsv', 'xlsx'])) {
+            return self::table($filename);
+        }
+
+        throw new ParseException(sprintf(
+            'The given file "%s" is of an unsupported file type (supported: YAML, JSON, INI, CSV, TSV, XLSX).', $filename)
+        );
+    }
+
     /**
      * Parses a configuration file and returns an associative array.
      *
@@ -43,7 +59,8 @@ class Parse
      * @return array Associative array of the configurations.
      * @throws ParseException if the file type is unsupported.
      */
-    public static function config(string $filename): array {
+    public static function config(string $filename): array
+    {
         switch (strtolower(self::getExt($filename))) {
             case 'yml':
             case 'yaml': return self::yaml($filename, false);
@@ -95,7 +112,7 @@ class Parse
     {
         $parser = self::getParser(__FUNCTION__);
 
-        return self::parse($parser, $input, $isString);
+        return self::parseWith($parser, $input, $isString);
     }
 
     /**
@@ -112,7 +129,7 @@ class Parse
     {
         $parser = self::getParser(__FUNCTION__);
 
-        return self::parse($parser, $input, $isString);
+        return self::parseWith($parser, $input, $isString);
     }
 
     /**
@@ -128,7 +145,7 @@ class Parse
     public static function ini(string $input, bool $isString = false): array {
         $parser = self::getParser(__FUNCTION__);
 
-        return self::parse($parser, $input, $isString);
+        return self::parseWith($parser, $input, $isString);
     }
 
     /**
@@ -156,7 +173,7 @@ class Parse
         $parser = self::getParser(__FUNCTION__);
         $params = [$header, $delimiter, $enclosure];
 
-        return self::parse($parser, $input, $isString, $params);
+        return self::parseWith($parser, $input, $isString, $params);
     }
 
     /**
@@ -181,7 +198,7 @@ class Parse
         $parser = self::getParser('csv');
         $params = [$header, "\t", $enclosure];
 
-        return self::parse($parser, $input, $isString, $params);
+        return self::parseWith($parser, $input, $isString, $params);
     }
 
     /**
@@ -244,7 +261,7 @@ class Parse
      * @return array The parsed data.
      * @throws ParseException if the file or string cannot be parsed.
      */
-    private static function parse(
+    private static function parseWith(
         ParserInterface $parser,
         string $input,
         bool $isString = false,
