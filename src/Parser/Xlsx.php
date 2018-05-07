@@ -50,7 +50,7 @@ class Xlsx implements ParserInterface
      * @return array The two-dimensional array of data.
      * @throws ParseException if the sheet cannot be parsed.
      */
-    public static function parse(string $filename, $header = true): array
+    public static function parse(string $filename, bool $header = true): array
     {
         try {
             $sheet = self::readFile($filename)->getActiveSheet();

@@ -43,8 +43,7 @@ class Parse
      * @return array Associative array of the configurations.
      * @throws ParseException if the file type is unsupported.
      */
-    public static function config($filename)
-    : array {
+    public static function config(string $filename): array {
         switch (strtolower(self::getExt($filename))) {
             case 'yml':
             case 'yaml': return self::yaml($filename, false);
@@ -68,7 +67,7 @@ class Parse
      * @return array The array of data from the table.
      * @throws ParseException if the file type is unsupported.
      */
-    public static function table($filename, bool $header = true): array
+    public static function table(string $filename, bool $header = true): array
     {
         switch (strtolower(self::getExt($filename))) {
             case 'csv':  return self::csv($filename, false, $header);
@@ -126,10 +125,7 @@ class Parse
      * @return array The parsed data.
      * @throws ParseException if the file or string cannot be parsed.
      */
-    public static function ini(
-        string $input,
-        bool $isString = false
-    ): array {
+    public static function ini(string $input, bool $isString = false): array {
         $parser = self::getParser(__FUNCTION__);
 
         return self::parse($parser, $input, $isString);
@@ -273,7 +269,7 @@ class Parse
      *
      * @return ParserInterface Returns the desired Parser.
      */
-    private static function getParser($name): ParserInterface
+    private static function getParser(string $name): ParserInterface
     {
         $class = __NAMESPACE__ . '\\Parser\\' . ucfirst(strtolower($name));
 
